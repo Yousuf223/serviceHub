@@ -83,6 +83,7 @@ class MyFriends extends Component {
                 <FlatList
                     contentContainerStyle={styles.flatListCont}
                     data={friendList}
+                    
                     showsVerticalScrollIndicator={false}
                     refreshControl={
                         <RefreshControl

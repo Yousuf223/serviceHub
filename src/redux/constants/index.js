@@ -70,6 +70,7 @@ export const GET_HOME_STORE = createRequestTypes('GET_HOME_STORE');
 export const SOCIAL_LOGIN = createRequestTypes('SOCIAL_LOGIN');
 export const CREATE_POST = createRequestTypes('CREATE_POST');
 export const GET_LIST = createRequestTypes('GET_LIST');
+export const GET_ADD_LIST = createRequestTypes('GET_ADD_LIST');
 export const GET_PROFILE = createRequestTypes('GET_PROFILE');
 export const NEAR_BY_USER_LIST = createRequestTypes('NEAR_BY_USER_LIST');
 export const SEND_REQUEST = createRequestTypes('SEND_REQUEST');
@@ -105,6 +106,7 @@ export default {
   CHANGE_PASSWORD,
   DELETE_USER,
   GET_ALL_STATES,
+  GET_ADD_LIST,
   ADD_PROPERTIES,
   GET_ALL_LEVELS_BY_ID,
   SIGNUP_USER,

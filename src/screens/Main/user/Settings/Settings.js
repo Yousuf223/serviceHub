@@ -38,7 +38,7 @@ class Settings extends Component {
                   src={appIcons.notification}
                   style={styles.icon}
                   resizeMode={"contain"}
-                  tintColor={colors.yellow}
+                  tintColor={colors.white}
                 />
                 <Text style={styles.contTitle}>
                   Push Notifications
@@ -51,9 +51,9 @@ class Settings extends Component {
                 trackOffStyle={styles.trackoff}
                 thumbOnStyle={styles.thumb}
                 thumbOffStyle={styles.thumboff}
-                onColor={colors.gray}
-                offColor={colors.gray}
-                circleColor={notification ? colors.primary : colors.white}
+                onColor={colors.white}
+                offColor={colors.white}
+                circleColor={notification ? colors.secondary : colors.black}
                 size="small"
               />
             </View>
@@ -69,7 +69,7 @@ class Settings extends Component {
                   src={appIcons.lock}
                   style={styles.icon}
                   resizeMode={"contain"}
-                  tintColor={colors.primary}
+                  tintColor={colors.white}
                 />
                 <Text style={styles.contTitle}>
                   Change Password
@@ -77,81 +77,6 @@ class Settings extends Component {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              activeOpacity={0.9}
-              style={[styles.flexRow, styles.cont]}
-              onPress={() => { Linking.openURL('https://www.google.com'); }}
-            >
-              <View style={[styles.flexRow]}>
-                <Img
-                  local
-                  src={appIcons.termsConditions}
-                  style={styles.icon}
-                  resizeMode={"contain"}
-                  tintColor={colors.primary}
-                />
-                <Text style={styles.contTitle}>
-                  Terms & Conditions
-                </Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              activeOpacity={0.9}
-              style={[styles.flexRow, styles.cont]}
-              onPress={() => { Linking.openURL('https://www.google.com'); }}
-            >
-              <View style={[styles.flexRow]}>
-                <Img
-                  local
-                  src={appIcons.privacyPolicy}
-                  style={styles.icon}
-                  resizeMode={"contain"}
-                />
-                <Text style={styles.contTitle}>
-                  Privacy Policy
-                </Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-              activeOpacity={0.9}
-              style={[styles.flexRow, styles.cont]}
-              onPress={() => this.setState({ modalVisible: true })}
-            >
-              <ConfirmationModal
-                isModalVisible={modalVisible}
-                togglePopup={() =>
-                  this.setState({ modalVisible: false })
-                }
-                Title={'Delete Profile'}
-                SubTitle={'Are you sure you want to delete profile?'}
-                onPress={() => {
-                  let payload = {
-                    user_id: user?._id
-                  }
-                  this.setState({ modalVisible: false })
-                  setTimeout(() => {
-                    this.props.deleteProfile(user?._id);
-                    this.props.logoutUser();
-                  }, 850)
-                }}
-                btnTitle={'Delete'}
-                close
-                logout
-                onPress2={() => this.setState({ modalVisible: false })}
-              />
-              <View style={[styles.flexRow]}>
-                <Img
-                  local
-                  src={appIcons.trash}
-                  style={styles.icon}
-                  resizeMode={"contain"}
-                />
-                <Text style={styles.contTitle}>
-                  Delete Profile
-                </Text>
-              </View>
-            </TouchableOpacity>
           </View>
         </View>
       </AppBackground>

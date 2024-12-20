@@ -14,12 +14,12 @@ import Toast from 'react-native-toast-message';
 import NavService from '../../../helpers/NavService';
 import { colors } from '../../../utils';
 import { appIcons, appLogos } from '../../../assets/index';
-import { loginCurrentUser } from '../../../redux/actions/authAction';
+import { signUpUser } from '../../../redux/actions/authAction';
 import { getDeviceToken } from '../../../redux/actions/appAction';
 import styles from './styles';
 
-const SignUp = () => {
-  // State variables
+const SignUp = ({route}) => {
+ const {role} = route.params
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
@@ -30,50 +30,51 @@ const SignUp = () => {
 
   // Form submission handler
   const onSubmit = async () => {
-    // if (!email) {
-    //   Toast.show({
-    //     text1: `Email field can't be empty`,
-    //     type: 'error',
-    //     visibilityTime: 3000,
-    //   });
-    //   return;
-    // }
+    if (!email) {
+      Toast.show({
+        text1: `Email field can't be empty`,
+        type: 'error',
+        visibilityTime: 3000,
+      });
+      return;
+    }
 
-    // if (!EmailValidator.validate(email)) {
-    //   Toast.show({
-    //     text1: 'You have entered an invalid email address.',
-    //     type: 'error',
-    //     visibilityTime: 3000,
-    //   });
-    //   return;
-    // }
+    if (!EmailValidator.validate(email)) {
+      Toast.show({
+        text1: 'You have entered an invalid email address.',
+        type: 'error',
+        visibilityTime: 3000,
+      });
+      return;
+    }
 
-    // if (!password || !confirmPassword) {
-    //   Toast.show({
-    //     text1: 'Password fields can\'t be empty.',
-    //     type: 'error',
-    //     visibilityTime: 3000,
-    //   });
-    //   return;
-    // }
+    if (!password || !confirmPassword) {
+      Toast.show({
+        text1: 'Password fields can\'t be empty.',
+        type: 'error',
+        visibilityTime: 3000,
+      });
+      return;
+    }
 
-    // if (password !== confirmPassword) {
-    //   Toast.show({
-    //     text1: 'Passwords do not match.',
-    //     type: 'error',
-    //     visibilityTime: 3000,
-    //   });
-    //   return;
-    // }
+    if (password !== confirmPassword) {
+      Toast.show({
+        text1: 'Passwords do not match.',
+        type: 'error',
+        visibilityTime: 3000,
+      });
+      return;
+    }  
 
-    // const payload = {
-    //   email: email,
-    //   password: password,
-    // };
+    const payload = {
+      email: email,
+      password: password,
+      confirmPassword: confirmPassword,
+      role: role
+    };
 
-    // dispatch(loginCurrentUser(payload));
+    dispatch(signUpUser(payload));
 
-    NavService.navigate('Otp');
   };
 
   return (

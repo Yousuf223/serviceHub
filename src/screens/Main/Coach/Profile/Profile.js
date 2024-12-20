@@ -16,15 +16,18 @@ import CustomTextInput from '../../../../components/CustomTextInput';
 import { appIcons } from '../../../../assets';
 import styles from './styles';
 import Card from '../../../../components/Card';
+import { useSelector } from 'react-redux';
 
 const Profile = () => {
+    const userData = useSelector((state) => state?.authReducer?.user)
+    console.log('userDatauserData', userData)
     const [search, setSearch] = useState('');
     const [data, setData] = useState([
-        { title: 'First Name', subTitle: 'Alex' },
-        { title: 'Last Name', subTitle: 'Carry' },
-        { title: 'Date Of Birth', subTitle: '2000-10-12' },
-        { title: 'Gender', subTitle: 'Male' },
-        { title: 'Phone', subTitle: '+1 222 2334 4' }
+        { title: 'First Name', subTitle: userData?.firstName },
+        { title: 'Last Name', subTitle: userData?.lastName },
+        { title: 'Date Of Birth', subTitle: '10-20-204' },
+        { title: 'Gender', subTitle: userData?.gender },
+        { title: 'Phone', subTitle: userData?.contactNumber }
     ])
     return (
         <AppBackground
@@ -35,11 +38,11 @@ const Profile = () => {
             // video={true}
             onVideoPress={() => togglePopUp()}
             marginHorizontal={false}>
-            <Image style={styles.userImage} source={appIcons.userPlaceholder} />
+            <Image style={styles.userImage} source={userData?.profilePicture ? { uri: userData?.profilePicture } : appIcons.userPlaceholder}  />
             <View style={{
                 flexDirection: 'row', justifyContent: 'space-around',
                 alignItems: "center", width: '100%',
-                marginBottom:26
+                marginBottom: 26
             }}>
                 <TouchableOpacity style={styles.btn}>
                     <Text style={styles.btnText}>Edit Business</Text>
@@ -53,6 +56,7 @@ const Profile = () => {
                 <FlatList
                     data={data}
                     showsVerticalScrollIndicator={false}
+                    keyExtractor={(item, index) => index?.toString()}
                     contentContainerStyle={{ flexGrow: 1, paddingBottom: '20%' }}
                     renderItem={({ item, index }) => {
                         return (

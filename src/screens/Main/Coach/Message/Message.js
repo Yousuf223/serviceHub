@@ -20,6 +20,7 @@ const [data,setData] = useState([{},{},{},{},{},{}])
       <FlatList 
                data={data}
                showsVerticalScrollIndicator={false}
+               keyExtractor={(item,index) => index?.toString()} 
                contentContainerStyle={{ flexGrow: 1, paddingBottom: '20%' }}
                renderItem={({ item, index }) => {
                  return (

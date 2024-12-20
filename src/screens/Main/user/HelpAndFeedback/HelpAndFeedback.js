@@ -163,7 +163,7 @@ class HelpAndFeedback extends Component {
               data={image}
               horizontal={true}
               showsHorizontalScrollIndicator={false}
-              // numColumns={3}
+              keyExtractor={(item,index) => index?.toString()} 
               renderItem={({item, index}) => {
                 return (
                   <View>

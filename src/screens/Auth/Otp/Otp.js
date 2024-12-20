@@ -20,9 +20,9 @@ import { otpVerify, resendOTP } from '../../../redux/actions/authAction';
 import { useDispatch, useSelector } from 'react-redux';
 
 const Otp = ({ navigation, route }) => {
-  const email = useSelector(state => state?.authReducer?.email); 
   const dispatch = useDispatch();
-
+  const params = route.params?.data; 
+  const [otpData, setOtpData] = useState(params); 
   let timer;
   const [code, setCode] = useState('');
   const [timerCode, setTimerCode] = useState(60);
@@ -30,15 +30,18 @@ const Otp = ({ navigation, route }) => {
   const [resendOtpActive, setResendOtpActive] = useState(false);
   const [key, setKey] = useState(0);
   const [otp, setOtp] = useState(['', '', '', '']);
-  const [focusIndex, setFocusIndex] = useState(0); 
+  const [focusIndex, setFocusIndex] = useState('');
   const inputRefs = useRef([]);
 
+  useEffect(() => {
+    setFocusIndex(params?.otp);
+  }, [params]); // Ensure focus index is updated
 
   const handleChange = (text, index) => {
     const newOtp = [...otp];
     newOtp[index] = text;
     setOtp(newOtp);
-    setCode(newOtp?.join('')); 
+    setCode(newOtp.join(''));
     if (text && index < otp.length - 1) {
       inputRefs.current[index + 1].focus();
     }
@@ -48,34 +51,38 @@ const Otp = ({ navigation, route }) => {
   };
 
   const onSubmit = () => {
-    // Validate OTP here
-    // const otpCode = otp.join('');
-    // if (otpCode.length === otp.length) {
-    //   if (email) {
-    //     const payload = { email, otp: otpCode };
-    //     dispatch(otpVerify(payload));
-    //   } else {
-    //     Toast.show({
-    //       text1: 'Email is not available.',
-    //       type: 'error',
-    //       visibilityTime: 3000,
-    //     });
-    //   }
-    // } else {
-    //   Toast.show({
-    //     text1: "OTP field can't be empty or incomplete.",
-    //     type: 'error',
-    //     visibilityTime: 3000,
-    //   });
-    // }
-    NavService.navigate('CompleteProfile')
+    const otpCode = otp.join('');
+    if (otp) {
+      if (otpData) {
+        const payload = {
+          role: otpData.role,
+          email: otpData?.email,
+          password: otpData.password,
+          confirmPassword: otpData.confirmPassword,
+          otp: code,
+        };
+        dispatch(otpVerify(payload));
+      } else {
+        Toast.show({
+          text1: 'Email is not available.',
+          type: 'error',
+          visibilityTime: 3000,
+        });
+      }
+    } else {
+      Toast.show({
+        text1: "OTP field can't be empty or incomplete.",
+        type: 'error',
+        visibilityTime: 3000,
+      });
+    }
   };
 
   // Timer for OTP expiration
   const startInterval = () => {
     clearInterval(timer);
     timer = setInterval(() => {
-      setTimerCode(prevTime => {
+      setTimerCode((prevTime) => {
         if (prevTime > 0) {
           return prevTime - 1;
         } else {
@@ -87,17 +94,24 @@ const Otp = ({ navigation, route }) => {
     }, 1000);
   };
 
-
-  const handleReset = () => {
+  // Handle reset/resend OTP
+  const handleReset = async () => {
     if (resend) {
-      setKey(prevKey => prevKey + 1);
+      setKey((prevKey) => prevKey + 1);
       setResendOtpActive(false);
       setTimerCode(60);
-      setResend(false)
-      setOtp(['', '', '', '']); 
-      setCode(''); 
+      setResend(false);
+
+      setOtp(['', '', '', '']);
+      setCode('');
 
       startInterval();
+
+      const payload = { email: otpData.email, role: otpData.role }; // Use otpData here
+      dispatch(resendOTP(payload, (response) => {
+        console.log('Resend OTP Response:', response);
+        setFocusIndex(response);
+      }));
     } else {
       Toast.show({
         text1: `Can't resend OTP. Please try again later.`,
@@ -108,7 +122,7 @@ const Otp = ({ navigation, route }) => {
   };
 
   useEffect(() => {
-    Keyboard.dismiss(); 
+    Keyboard.dismiss();
     const backAction = () => {
       NavService.navigate('Login');
       return true;
@@ -116,7 +130,7 @@ const Otp = ({ navigation, route }) => {
 
     const backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
-      backAction,
+      backAction
     );
     const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
       setResendOtpActive(true);
@@ -143,17 +157,9 @@ const Otp = ({ navigation, route }) => {
     <CustomBackground showLogo={false} titleText={'Verification'}>
       <View style={styles.container}>
         <View style={[styles.container]}>
-        <View style={styles.container1}>
-            <View style={styles.icon}>
-              <Text style={styles.iconText}>🔧</Text>
-            </View>
-
-            {/* Logo Text */}
-            <Text style={styles.logoText}>Service Hub</Text>
+          <View style={styles.icon}>
+            <Text style={styles.iconText}>🔧</Text>
           </View>
-          {/* <View style={styles.logoStyle}>
-            <Image style={styles.applogo} source={appLogos.appLogo} />
-          </View> */}
           <Text style={styles.dec}>
             We have sent you an email containing 4 digits verification code.
             Please enter the code to verify your identity.
@@ -166,8 +172,8 @@ const Otp = ({ navigation, route }) => {
                 maxLength={1}
                 keyboardType="numeric"
                 value={digit}
-                onChangeText={text => handleChange(text, index)}
-                ref={el => (inputRefs.current[index] = el)}
+                onChangeText={(text) => handleChange(text, index)}
+                ref={(el) => (inputRefs.current[index] = el)} // Store refs for each input field
                 returnKeyType="done"
                 blurOnSubmit={false}
               />
@@ -205,6 +211,7 @@ const Otp = ({ navigation, route }) => {
             </CountdownCircleTimer>
           </View>
         </View>
+        <Text style={styles.textNormal}>OTP: {focusIndex}</Text>
         <View style={styles.bottomView}>
           <Text style={styles.textNormal}>Didn't receive a code?</Text>
           <TouchableOpacity disabled={timerCode !== 0} onPress={handleReset}>

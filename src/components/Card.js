@@ -18,17 +18,17 @@ const { width } = Dimensions.get('screen');
 
 const Card = ({ onPress, item, cardStyle }) => {
   const [like, setLike] = useState(false);
-  console.log('itemitemitem', item)
+  console.log('itemitemitem', item?.userId)
   return (
     <TouchableOpacity activeOpacity={0.8} onPress={onPress} style={[styles.card, cardStyle]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20, paddingLeft: 20 }}>
-        <Image style={styles.userImg} source={appIcons.user} />
-        <Text>John Miller</Text>
+        <Image style={styles.userImg} source={item?.userId?.profilePicture ? {uri:item?.userId?.profilePicture} :  appIcons.user} />
+        <Text>{item?.userId?.firstName + ' ' +item?.userId?.lastName }</Text>
       </View>
-      <Image style={styles.post} source={appIcons.event} />
+      <Image style={styles.post} source={{uri:item?.media[0]?.mediaUrl}} />
       <View style={{ paddingHorizontal: 10, paddingVertical: 0 }}>
-        <Text style={styles.title}>{item?.title}</Text>
-        <Text numberOfLines={3} style={styles.dec}>{item?.dec}</Text>
+        <Text style={styles.title}>{item?.category}</Text>
+        <Text numberOfLines={3} style={styles.dec}>{item?.caption}</Text>
       </View>
     </TouchableOpacity>
   );
@@ -57,9 +57,10 @@ const styles = StyleSheet.create({
 
   },
   post: {
-    width: '100%',
+    width: '96%',
     height: 220,
-    marginTop: 20
+    marginTop: 20,
+    alignSelf:'center'
     // borderTopRightRadius:7,
     // borderTopLeftRadius:7,
     // resizeMode:'contain',
@@ -97,6 +98,7 @@ const styles = StyleSheet.create({
   userImg: {
     width: 60,
     height: 60,
-    borderRadius: 60
+    borderRadius: 60,
+    marginRight:10
   }
 });

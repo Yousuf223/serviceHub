@@ -16,18 +16,21 @@ import CustomTextInput from '../../../../components/CustomTextInput';
 import { appIcons } from '../../../../assets';
 import styles from './styles';
 import Card from '../../../../components/Card';
-import { loaderStop } from '../../../../redux/actions/appAction';
+import { getAddList, loaderStop } from '../../../../redux/actions/appAction';
 import { useDispatch } from 'react-redux';
 
 const Home = () => {
   const dispatch = useDispatch()
-  useEffect(()=>{
-    dispatch(loaderStop())
-
-  },)
   const [search, setSearch] = useState('');
-  const [data, setData] = useState([{ image: appIcons.event, title: 'Health', dec: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua' },
-  { image: appIcons.event, title: 'Health', dec: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua' }, { image: appIcons.event, title: 'Health', dec: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua' }])
+  const [data, setData] = useState([])
+
+  useEffect(() => {
+    dispatch(getAddList(response => {
+      console.log('Resend OTP Response:', response);
+      setData(response)
+
+    }));
+  }, [])
   return (
     <AppBackground
       menu

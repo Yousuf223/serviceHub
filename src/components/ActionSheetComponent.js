@@ -33,7 +33,8 @@ const ActionSheetComponent = React.forwardRef(
             showsVerticalScrollIndicator={false}>
             {dataset?.map((item, index) => {
               return (
-                <TouchableOpacity
+                <TouchableOpacity 
+                key={index} 
                   onPress={() => {
                     ref.current.hide();
                     onPress(item);

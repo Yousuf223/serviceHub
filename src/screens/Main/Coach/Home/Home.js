@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   FlatList,
   View,
@@ -16,11 +16,21 @@ import CustomTextInput from '../../../../components/CustomTextInput';
 import { appIcons } from '../../../../assets';
 import styles from './styles';
 import Card from '../../../../components/Card';
+import { useDispatch } from 'react-redux';
+import { getEventList } from '../../../../redux/actions/appAction';
 
 const Home = () => {
+  const dispatch = useDispatch()
   const [search, setSearch] = useState('');
-  const [data, setData] = useState([{ image: appIcons.event, title: 'Health', dec: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua' },
-  { image: appIcons.event, title: 'Health', dec: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua' }, { image: appIcons.event, title: 'Health', dec: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua' }])
+  const [data, setData] = useState([])
+
+  useEffect(() => {
+    dispatch(getEventList(response => {
+      console.log('Resend OTP Response:', response);
+      setData(response)
+
+    }));
+  }, [])
   return (
     <AppBackground
       menu
@@ -44,7 +54,7 @@ const Home = () => {
         <FlatList
           data={data}
           showsVerticalScrollIndicator={false}
-          keyExtractor={(item,index) => index?.toString()} 
+          keyExtractor={(item, index) => index?.toString()}
           contentContainerStyle={{ flexGrow: 1, paddingBottom: '20%' }}
           renderItem={({ item, index }) => {
             return (

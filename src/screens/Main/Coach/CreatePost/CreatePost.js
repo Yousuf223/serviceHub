@@ -8,7 +8,7 @@ import {
   ScrollView,
   Platform,
 } from 'react-native';
-import { connect } from 'react-redux';
+import { connect, useDispatch, useSelector } from 'react-redux';
 import AppBackground from '../../../../components/AppBackground';
 import NavService from '../../../../helpers/NavService';
 import { appIcons, appImages } from '../../../../assets';
@@ -18,13 +18,15 @@ import CustomButton from '../../../../components/CustomButton';
 import CustomImagePicker from '../../../../components/CustomImagePicker';
 import { Image as ImageCompressor, Video as VideoCompressor } from 'react-native-compressor';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
-import { createPost } from '../../../../redux/actions/appAction';
-
+import { createPost, loaderStart, loaderStop } from '../../../../redux/actions/appAction';
+import axios from 'axios';
+import { BASE_URL } from '../../../../config/WebService';
 const CreatePost = ({ route, createPost }) => {
   const [description, setDescription] = useState('');
+  const dispatch = useDispatch()
   const [image, setImage] = useState([]);
   const [video, setVideo] = useState([]);
-
+  const token = useSelector((state) => state.authReducer.userToken)
   const updateImageInGallery = async (path, mime, type) => {
     let multipleImages = [];
     if (Array.isArray(path)) {
@@ -59,8 +61,10 @@ const CreatePost = ({ route, createPost }) => {
     setImage((prevImage) => prevImage.filter((item) => item.uri !== asset));
   };
 
+
+
   const onSubmit = () => {
-    if (description === '' && image.length === 0 && video.length === 0) {
+    if (description === '' && image.length === 0) {
       Toast.show({
         text1: 'Please post something',
         type: 'error',
@@ -73,22 +77,44 @@ const CreatePost = ({ route, createPost }) => {
         visibilityTime: 3000,
       });
     } else {
+      dispatch(loaderStart());
       const payload = new FormData();
-      payload.append('description', description);
+      payload.append('caption', description);
       image.forEach((item) => {
         delete item?.tempType;
-        payload.append('post_images', item);
+        payload.append('AddMedia', item);
       });
-      video.forEach((item) => {
-        delete item?.tempType;
-        payload.append('post_videos', item);
-      });
-      createPost(payload);
-      setTimeout(() => {
-        NavService.navigate('BottomTabs', { name: 'Home' });
-      }, 3500);
+      axios.post(`${BASE_URL}service-provider/adds`, payload, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`,
+        },
+      })
+        .then(response => {
+          console.log('responseresponse',response?.data)
+           Toast.show({
+             text1: response?.data?.message,
+             type: 'success',
+             visibilityTime: 3000,
+           });
+          console.log(response.data);
+          dispatch(loaderStop());
+          setTimeout(() => {
+            NavService.navigate('BottomTabs', { name: 'Home' });
+          }, 3500);
+        })
+        .catch(error => {
+          console.log('errorerror', error?.response)
+          dispatch(loaderStop());
+          Toast.show({
+            text1: 'Failed to create post. Try again.',
+            type: 'error',
+            visibilityTime: 3000,
+          });
+        });
     }
   };
+
 
 
 
@@ -98,7 +124,7 @@ const CreatePost = ({ route, createPost }) => {
       onBack={() => NavService.navigate('BottomTabs', { name: 'Home' })}
       marginHorizontal={false}>
       <View>
-      
+
         <TextInput
           maxLength={275}
           style={styles.dec}
@@ -111,7 +137,7 @@ const CreatePost = ({ route, createPost }) => {
           value={description}
           onChangeText={(value) => setDescription(value)}
         />
-         <ScrollView
+        <ScrollView
           style={{
             // position: 'absolute',
             // zIndex: 100,
@@ -134,7 +160,7 @@ const CreatePost = ({ route, createPost }) => {
             ))}
         </ScrollView>
       </View>
-     
+
       <View style={styles.row}>
         <CustomImagePicker
           isMultiple={true}
@@ -150,7 +176,7 @@ const CreatePost = ({ route, createPost }) => {
           )}
         </CustomImagePicker>
       </View>
-      <CustomButton  buttonStyle={styles.buttonStyle} onPress={onSubmit} title="Post" />
+      <CustomButton buttonStyle={styles.buttonStyle} onPress={onSubmit} title="Post" />
     </AppBackground>
   );
 };

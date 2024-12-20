@@ -157,6 +157,7 @@ class Chat extends Component {
             inverted
             showsVerticalScrollIndicator={false}
             style={styles.flatListStyle}
+            keyExtractor={(item,index) => index?.toString()} 
             contentContainerStyle={styles.flatListCont}
             renderItem={({item, index}) => {
               console.log('item---------item---------item', item);

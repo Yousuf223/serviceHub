@@ -103,6 +103,7 @@ function HomeShareModal(props) {
           data={list}
           horizontal
           contentContainerStyle={styles.contentCont}
+          keyExtractor={(item,index) => index?.toString()} 
           showsHorizontalScrollIndicator={false}
           renderItem={({item, index}) => {
             console.log('InsideHooooooooooooo', item);

@@ -40,12 +40,12 @@ class RoleSelection extends Component {
              buttonStyle={styles.buttonStyle}
               onPress={() =>
                  [NavService.navigate('Login',{
-                     role: 'User'
+                     role: 'USER'
                  })]}
               title={'User'} />
             <CustomButton
               onPress={() => [NavService.navigate('Login', {
-                role: 'ServiceProvider'
+                role: 'SERVICEPROVIDER'
               })
            ]}
               textStyle={styles.textStyle}

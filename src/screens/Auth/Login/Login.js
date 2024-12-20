@@ -7,7 +7,7 @@ import CustomButton from '../../../components/CustomButton';
 import CustomTextInput from '../../../components/CustomTextInput';
 import Toast from 'react-native-toast-message';
 import NavService from '../../../helpers/NavService';
-import { loginUser} from '../../../redux/actions/authAction';
+import { loginCurrentUser} from '../../../redux/actions/authAction';
 import {appIcons, appLogos} from '../../../assets/index';
 import {colors} from '../../../utils';
 import styles from './styles';
@@ -44,11 +44,11 @@ const Login = ({ navigation,route}) => {
       });
     } else {
       let payload = {
-        email,
-        password,
-        role
+        email:email,
+        password:password,
+        role:role
       };
-      dispatch(loginUser(payload));
+      dispatch(loginCurrentUser(payload));
     }
   };
 
@@ -96,7 +96,9 @@ const Login = ({ navigation,route}) => {
 
         <TouchableOpacity
           activeOpacity={0.8}
-          onPress={() => NavService.navigate('SignUp')}
+          onPress={() => NavService.navigate('SignUp',{
+            role
+          })}
           style={styles.bottomView}>
           <Text style={styles.textNormal}>
             Create New Account?{' '}

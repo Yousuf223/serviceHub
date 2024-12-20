@@ -25,6 +25,7 @@ import API_URL, {
   GET_ALL_LEVELS,
   UPLOAD_image,GET_NOTIFICATION,
   CREATE_HEEDBACK,
+  GET_ADD_LIST,
 } from '../config/WebService';
 import ApiSauce from '../services/ApiSauce';
 import NavService from '../helpers/NavService';
@@ -47,11 +48,7 @@ function* getEventList() {
       if (response) {
         console.log('----responseresponse', response?.data);
         if (responseCallback) {
-          if (response?.data?.length > 0) {
-            responseCallback(response?.data);
-          } else {
-            responseCallback([]);
-          }
+          responseCallback(response?.data);
         }
       } else {
         console.log('errrorr-logged');
@@ -64,16 +61,14 @@ function* getEventList() {
     }
   }
 }
-function* getAllLevels() {
+function* getAddList() {
   while (true) {
-    const {params, responseCallback} = yield take(
-      ActionTypes.GET_ALL_LEVELS.REQUEST,
-    );
+    const {params, responseCallback} = yield take(ActionTypes.GET_ADD_LIST.REQUEST);
     yield put(loaderStart());
     try {
       const response = yield call(
         callRequest,
-        GET_ALL_LEVELS,
+        GET_ADD_LIST,
         null,
         '',
         {},
@@ -83,18 +78,14 @@ function* getAllLevels() {
       if (response) {
         console.log('----responseresponse', response?.data);
         if (responseCallback) {
-          if (response?.data?.length > 0) {
-            responseCallback(response?.data);
-          } else {
-            responseCallback([]);
-          }
+          responseCallback(response?.data);
         }
       } else {
         console.log('errrorr-logged');
       }
     } catch (error) {
       responseCallback([]);
-      console.log('errorofgetpostlist', error?.error);
+      console.log('errorofgetpostlist', error);
       // Util.DialogAlert(error?.message);
       yield put(loaderStop());
     }
@@ -759,7 +750,7 @@ function* createHeedback() {
 
 export default function* root() {
   yield fork(getEventList);
-  yield fork(getAllLevels);
+  yield fork(getAddList);
   yield fork(getProfile);
   yield fork(nearByUserList);
   yield fork(SendRequest);

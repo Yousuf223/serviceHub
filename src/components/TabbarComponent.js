@@ -16,7 +16,7 @@ import { useSelector } from 'react-redux';
 const { width } = Dimensions.get('screen');
 
 const TabBar = ({ state, navigation }) => {
-  const user = useSelector((state) => state.authReducer.user)
+  const user = useSelector((state) => state?.authReducer?.user)
   const [isVisible, setIsVisible] = useState(false);
   const [isUpdated, setIsUpdated] = useState(0);
   const [keyboardStatus, setKeyboardStatus] = useState(false);
@@ -134,7 +134,7 @@ const TabBar = ({ state, navigation }) => {
           })}
         </View>
       </View>
-      {user?.role && user?.role === 'ServiceProvider' && <TouchableOpacity 
+      {user?.role && user?.role === 'SERVICEPROVIDER' && <TouchableOpacity 
       activeOpacity={0.7} 
       onPress={() => NavService.navigate('CreatePost')} style={styles.fabButton}>
         <Image

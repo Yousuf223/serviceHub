@@ -74,6 +74,7 @@ class Notification extends Component {
                     <FlatList
                         data={notificationList}
                         showsVerticalScrollIndicator={false}
+                        keyExtractor={(item,index) => index?.toString()} 
                         renderItem={({ item }) => {
                             return (
                                 <TouchableOpacity

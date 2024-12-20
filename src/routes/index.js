@@ -21,12 +21,12 @@ const MainNavigation = () => {
     return () => clearTimeout(splashTimeout);
   }, []);
   const user = useSelector((state) => state?.authReducer?.user)
-  console.log('sdfjshfds', user)
+
   return (
     <NavigationContainer ref={NavService.setTopLevelNavigator}>
       <View style={styles.container}>
         {/* Conditionally render RoleSelection or AuthNavigation based on the user's login status */}
-        {user ?
+        {user && user ?
          <RoleSelection initialRoute={undefined} /> 
         : <AuthNavigation initialRoute={undefined} />}
       </View>

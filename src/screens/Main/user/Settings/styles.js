@@ -5,18 +5,21 @@ import { colors } from '../../../../utils';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '100%',
+    width: '90%',
+    alignSelf:'center'
   },
 
   cont: {
     ...appStyles.w100,
     ...appStyles.alignCenter,
     ...appStyles.justifySpaceBetween,
-    backgroundColor: colors.lightBlack,
+    backgroundColor: colors.primary,
     marginVertical: 5,
     paddingHorizontal: 15,
     paddingVertical: 20,
-    borderRadius: 10
+    borderRadius: 10,
+    // borderWidth:1,
+    // borderColor:colors.primary
   },
 
   flexRow: {

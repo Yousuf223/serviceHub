@@ -50,10 +50,15 @@ export function createPost(params, responseCallback) {
     responseCallback,
   };
 }
-export function getEventList(params, responseCallback) {
+export function getEventList(responseCallback) {
   return {
     type: ActionTypes.GET_LIST.REQUEST,
-    params,
+    responseCallback,
+  };
+}
+export function getAddList(responseCallback) {
+  return {
+    type: ActionTypes.GET_ADD_LIST.REQUEST,
     responseCallback,
   };
 }

@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
     width: 100,
     height: 100,
     borderRadius: 50,
-    backgroundColor: '#1e90ff',  // Blue color for the circle
+    backgroundColor: colors.primary,
     justifyContent: 'center',
     alignItems: 'center',
     marginBottom: 10,  // Space between icon and text
@@ -75,7 +75,7 @@ const styles = StyleSheet.create({
   logoText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#1e90ff',  // Blue color for the logo text
+    color: colors.primary,  // Blue color for the logo text
   },
 });
 

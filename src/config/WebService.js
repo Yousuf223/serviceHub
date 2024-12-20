@@ -3,7 +3,7 @@ import ApiSauce from '../services/ApiSauce';
 import store from '../redux';
 
 // export const BASE_URL = 'https://server.appsstaging.com:3017/api/v1/';
-export const BASE_URL = 'http://18.222.27.223:9900/api/v1/';
+export const BASE_URL = 'https://sn6jm18m-5000.inc1.devtunnels.ms/api/v1/';
 export const ASSETS_URL = 'https://host2.appsstaging.com/3332/lift_fitness/';
 export const WEB_SOCKET_URL = 'https://host2.appsstaging.com:3018/';
 export const GOOGLE_MAPS_URL =
@@ -45,18 +45,18 @@ export const REQUEST_TYPE = {
 // API USER ROUTES
 
 export const SIGNUP = {
-  route: 'register',
+  route: 'auth/signup',
   access_token_required: false,
   type: REQUEST_TYPE.POST,
 };
 export const VERIFY_OTP = {
-  route: 'users/auth/verify-otp',
+  route: 'auth/verify-otp',
   access_token_required: false,
   type: REQUEST_TYPE.POST,
 };
 
 export const LOGIN = {
-  route: 'users/auth/login',
+  route: 'auth/login',
   access_token_required: false,
   type: REQUEST_TYPE.POST,
 };
@@ -66,7 +66,7 @@ export const RESEND_PASSWORD = {
   type: REQUEST_TYPE.POST,
 };
 export const RESEND_OTP = {
-  route: 'users/auth/resend-otp',
+  route: 'auth/resend-otp',
   access_token_required: false,
   type: REQUEST_TYPE.POST,
 };
@@ -86,9 +86,9 @@ export const LOGOUT = {
   type: REQUEST_TYPE.POST,
 };
 export const COMPLETE_PROFILE = {
-  route: 'users/me',
+  route: 'auth/user-complete-profile',
   access_token_required: true,
-  type: REQUEST_TYPE.PATCH,
+  type: REQUEST_TYPE.POST,
 };
 export const UPDATE_PROFILE = {
   route: 'users/me',
@@ -121,7 +121,12 @@ export const CREATE_POST = {
   type: REQUEST_TYPE.POST,
 };
 export const GET_LIST = {
-  route: 'events',
+  route: 'service-provider/adds',
+  access_token_required: true,
+  type: REQUEST_TYPE.GET,
+};
+export const GET_ADD_LIST = {
+  route: 'user/public-feed',
   access_token_required: true,
   type: REQUEST_TYPE.GET,
 };

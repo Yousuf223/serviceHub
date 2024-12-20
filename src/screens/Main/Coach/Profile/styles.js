@@ -14,7 +14,8 @@ const styles = StyleSheet.create({
     height:130,
     alignSelf:"center",
     marginVertical:16,
-     position:'relative'
+     position:'relative',
+     borderRadius:30
   },
   cardData:{
     backgroundColor:colors.white,

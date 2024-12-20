@@ -63,16 +63,15 @@ export default (states = INITIAL_STATE, action) => {
         ...states,
         verificationPopUp: action.payload,
       };
-    case USERLOGOUT:
-      return {
-        ...states,
-        user: null,
-        userToken: null,
-        isUserLogin: false,
-        currentUserProfile: {},
-        role: null,
-
-      };
+      case USERLOGOUT:
+        return {
+          ...states,
+          user: null,
+          userToken: null,
+          isUserLogin: false,
+          currentUserProfile: {},
+          role: null,
+        };
     default:
       return states;
   }

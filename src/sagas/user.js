@@ -27,7 +27,6 @@ import ApiSauce from '../services/ApiSauce';
 import Util from '../utils/Utils';
 import NavService from '../helpers/NavService';
 
-
 function* login() {
   while (true) {
     const { payload } = yield take(ActionTypes.LOGIN_USER.REQUEST);
@@ -43,24 +42,28 @@ function* login() {
       );
       yield put(loaderStop());
       if (response) {
-        console.log('responseresponse', response);
-        if (response.status.success === true) {
-         if (response?.data?.user.isProfileComplete == false) {
-          yield put(saveTokenForLoginUser(response?.data?.token));
-            NavService.navigate('CompleteProfile',{email:payload?.email});
+        console.log('login user', response?.data);
+        if (response) {
+          if (response?.data?.user.isProfileCompleted == false) {
+            yield put(saveTokenForLoginUser(response?.token));
+            NavService.navigate('CompleteProfile', { role: payload?.role });
             Util.DialogAlert(response.message, 'success');
-          } else {
-            console.log('login response', response.data);
-            yield put(saveTokenForLoginUser(response?.data?.token));
-            yield put(loginUser(response?.data));
+          }
+          else if(response?.data?.user?.isBussinessDetailsCompleted == false){
+            NavService.navigate('ServiceProviderDetail');
+            yield put(saveTokenForLoginUser(response?.token));
+          }
+           else {
+            yield put(saveTokenForLoginUser(response?.token));
+            yield put(loginUser(response?.data?.user));
             Util.DialogAlert('Login Successfully', 'success');
           }
-        } 
-      } 
+        }
+      }
     } catch (error) {
       console.log('-----errorerror----', error);
       yield put(loaderStop());
-       Util.DialogAlert(error.error);
+      Util.DialogAlert(error.message);
     }
   }
 }
@@ -78,20 +81,31 @@ function* signUp() {
         ApiSauce,
       );
       yield put(loaderStop());
-      if (response.status === 1) {
+      if (response) {
+        console.log('response-------', response);
         Util.DialogAlert(response.message, 'success');
+        const paramData = {
+          email: payload.email,
+          password: payload.password,
+          confirmPassword: payload.confirmPassword,
+          role:payload.role,
+          otp:response.data
+        }
+        // yield put(setOtpData(paramData));
         NavService.navigate('Otp', {
-          user_id: response?.data?.user_id,
-          role: role,
-          screenName: 'signup',
+          data: paramData
         });
       } else {
-        Util.DialogAlert(response.message);
+        Util.DialogAlert('No response received');
       }
     } catch (error) {
       console.log('error=======errror', error);
       yield put(loaderStop());
-      Util.DialogAlert(error.message);
+      if (error && error.message) {
+        Util.DialogAlert(error.message[0]?.message);
+      } else {
+        Util.DialogAlert('Something went wrong!');
+      }
     }
   }
 }
@@ -112,25 +126,24 @@ function* oTPVerify() {
         ApiSauce,
       );
       yield put(loaderStop());
-      console.log('responseresponse',response)
-      if (response.status.success === true) {
-        yield put(saveTokenForLoginUser(response?.data?.token));
-        Util.DialogAlert(response.message,'success');
-        NavService.navigate('ChangePassword');
+      console.log('responseresponse', response)
+      if (response) {
+        yield put(saveTokenForLoginUser(response?.token));
+        Util.DialogAlert(response.message, 'success');
+        NavService.navigate('CompleteProfile',{role:payload.role});
       } else {
         Util.DialogAlert(response.message);
       }
     } catch (error) {
       console.log('error', error);
       yield put(loaderStop());
-      Util.DialogAlert(error.error);
+      Util.DialogAlert(error.message);
     }
   }
 }
 function* resendOTP() {
   while (true) {
-    const { payload,responseCallback} = yield take(ActionTypes.RESEND_OTP.REQUEST);
-    console.log('payload', payload);
+    const { payload, responseCallback } = yield take(ActionTypes.RESEND_OTP.REQUEST);
     yield put(loaderStart());
     try {
       const response = yield call(
@@ -142,13 +155,14 @@ function* resendOTP() {
         ApiSauce,
       );
       yield put(loaderStop());
-      if (response.status.success === true) {
+      if (response) {
+        console.log('responseresponseresponse',response?.data)
         NavService.navigate('Otp', {
-          otp:response.data.otp
+          otp: response.data.otp
         });
-      if(responseCallback){
-        responseCallback(response.data.otp)
-      }
+        if (responseCallback) {
+          responseCallback(response.data)
+        }
         Util.DialogAlert(response.message, 'success');
       } else {
         Util.DialogAlert(response.message);
@@ -156,7 +170,7 @@ function* resendOTP() {
     } catch (error) {
       console.log('error', error);
       yield put(loaderStop());
-      Util.DialogAlert(error.error);
+      Util.DialogAlert(error.message);
     }
   }
 }

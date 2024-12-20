@@ -64,7 +64,7 @@ class MyEarning extends Component {
 
                     <FlatList
                         showsVerticalScrollIndicator={false}
-                        keyExtractor={(item, index) => index.toString()}
+                        keyExtractor={(item, index) => index?.toString()}
                         contentContainerStyle={{ paddingTop: 10 }}
                         data={[1, 2, 3, 4, 5, 6, 7]}
                         renderItem={({ item, index }) => {

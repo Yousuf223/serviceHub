@@ -140,7 +140,7 @@ const styles = StyleSheet.create({
   buttonStyle: {
     borderRadius: 10,
     alignSelf: 'center',
-    width: '89%',
+    width: '100%',
     marginTop:20
   },
   bottomView: {
@@ -181,8 +181,12 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.black,
     fontSize: size.tiny,
-    width:'90%',alignSelf:"center"
+    width:'100%',alignSelf:"center"
 },
+containerStyle:{
+  width:'100%'
+}
+
 });
 
 export default styles;

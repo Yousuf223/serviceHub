@@ -13,12 +13,11 @@ import UserNavigation from './user/userStack';
 class RoleSelection extends Component {
   render() {
     const loggedInUser = this.props?.user;
-    // const role = this.props.role
     return (
       <>
-        {loggedInUser && loggedInUser?.role == 'User' ? (
+        {loggedInUser?.role && loggedInUser?.role == 'USER' ? (
           <UserNavigation initialRoute={undefined} />
-        ) : loggedInUser && loggedInUser?.role == 'ServiceProvider' ? (
+        ) : loggedInUser?.role && loggedInUser?.role == 'SERVICEPROVIDER' ? (
           <CoachNavigation />
         )  : (
           <AuthNavigation initialRoute={undefined} />
