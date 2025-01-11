@@ -76,6 +76,14 @@ export function getNotification(params, responseCallback) {
     responseCallback,
   };
 }
+
+export function toggleNotification(responseCallback) {
+  return {
+    type: ActionTypes.TOGGLE_NOTIFICATION.REQUEST,
+    responseCallback,
+  };
+}
+
 export function getAllLevelsById(params, responseCallback) {
   return {
     type: ActionTypes.GET_ALL_LEVELS_BY_ID.REQUEST,

@@ -57,9 +57,19 @@ const Home = () => {
           keyExtractor={(item,index) => index?.toString()} 
           contentContainerStyle={{ flexGrow: 1, paddingBottom: '20%' }}
           renderItem={({ item, index }) => {
+            console.log('itemitem',item?.userId?.profilePicture)
             return (
-              <Card item={item} />
+              <Card
+              userName={item?.userId?.firstName + ' ' + item?.userId?.lastName}
+               userImage={item?.userId?.profilePicture ? {uri:item?.userId?.profilePicture}:appIcons.userPlaceholder } item={item} />
             )
+          }}
+          ListEmptyComponent={() => {
+            return (
+              <View style={styles.listempty}>
+                <Text style={styles.txtlistempty}>No Service Found</Text>
+              </View>
+            );
           }}
         />
       </View>

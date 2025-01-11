@@ -26,7 +26,6 @@ const Profile = () => {
     const [data, setData] = useState([
         { title: 'First Name', subTitle: userData?.firstName },
         { title: 'Last Name', subTitle: userData?.lastName },
-        { title: 'Date Of Birth', subTitle: '10-20-204' },
         { title: 'Gender', subTitle: userData?.gender },
         { title: 'Phone', subTitle: userData?.contactNumber }
     ])
@@ -41,8 +40,8 @@ const Profile = () => {
             marginHorizontal={false}>
             <Image style={styles.userImage} source={userData?.profilePicture ? { uri: userData?.profilePicture } : appIcons.userPlaceholder} />
             <TouchableOpacity style={{
-                width: 56, height: 39, alignSelf: "center", bottom: 50, backgroundColor: colors.white, justifyContent: 'center',
-                alignItems: 'center', borderRadius: 10, right: -53
+                width: 46, height: 40, alignSelf: "center", bottom: 50, backgroundColor: colors.white, justifyContent: 'center',
+                alignItems: 'center', borderRadius: 10, right: -53,borderWidth:1,borderColor:colors.primary
             }} >
                 <Image style={styles.edit} source={appIcons.edit} />
             </TouchableOpacity>

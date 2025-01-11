@@ -1,7 +1,7 @@
-import {take, put, call, fork} from 'redux-saga/effects';
+import { take, put, call, fork } from 'redux-saga/effects';
 import ActionTypes from '../redux/constants';
-import {loginUser} from '../redux/actions/authAction';
-import {loaderStart, loaderStop} from '../redux/actions/appAction';
+import { loginUser } from '../redux/actions/authAction';
+import { loaderStart, loaderStop } from '../redux/actions/appAction';
 import API_URL, {
   callRequest,
   GET_LIST,
@@ -23,17 +23,19 @@ import API_URL, {
   GET_ALL_LEVELS_BY_ID,
   GET_NOTIFICATION_ONOFF,
   GET_ALL_LEVELS,
-  UPLOAD_image,GET_NOTIFICATION,
+  UPLOAD_image, GET_NOTIFICATION,
   CREATE_HEEDBACK,
   GET_ADD_LIST,
+  TOGGLE_NOTIFICATION,
 } from '../config/WebService';
 import ApiSauce from '../services/ApiSauce';
 import NavService from '../helpers/NavService';
 import Util from '../utils/Utils';
 
+
 function* getEventList() {
   while (true) {
-    const {params, responseCallback} = yield take(ActionTypes.GET_LIST.REQUEST);
+    const { params, responseCallback } = yield take(ActionTypes.GET_LIST.REQUEST);
     yield put(loaderStart());
     try {
       const response = yield call(
@@ -63,7 +65,7 @@ function* getEventList() {
 }
 function* getAddList() {
   while (true) {
-    const {params, responseCallback} = yield take(ActionTypes.GET_ADD_LIST.REQUEST);
+    const { params, responseCallback } = yield take(ActionTypes.GET_ADD_LIST.REQUEST);
     yield put(loaderStart());
     try {
       const response = yield call(
@@ -93,7 +95,7 @@ function* getAddList() {
 }
 function* getNotification() {
   while (true) {
-    const {params, responseCallback} = yield take(
+    const { params, responseCallback } = yield take(
       ActionTypes.GET_NOTIFICATION.REQUEST,
     );
     yield put(loaderStart());
@@ -124,13 +126,13 @@ function* getNotification() {
       responseCallback([]);
       console.log('errorofgetpostlist', error);
       // Util.DialogAlert(error?.message);
- 
+
     }
   }
 }
 function* getProfile() {
   while (true) {
-    const {params, responseCallback} = yield take(
+    const { params, responseCallback } = yield take(
       ActionTypes.GET_PROFILE.REQUEST,
     );
     yield put(loaderStart());
@@ -161,7 +163,7 @@ function* getProfile() {
 }
 function* getAllLevelsById() {
   while (true) {
-    const {params, responseCallback} = yield take(
+    const { params, responseCallback } = yield take(
       ActionTypes.GET_ALL_LEVELS_BY_ID.REQUEST,
     );
     yield put(loaderStart());
@@ -176,7 +178,7 @@ function* getAllLevelsById() {
         // params?.id
       );
       yield put(loaderStop());
-      console.log('sadsa',response)
+      console.log('sadsa', response)
       if (response) {
         if (responseCallback) {
           responseCallback(response);
@@ -193,7 +195,7 @@ function* getAllLevelsById() {
 }
 function* nearByUserList() {
   while (true) {
-    const {params, responseCallback} = yield take(
+    const { params, responseCallback } = yield take(
       ActionTypes.NEAR_BY_USER_LIST.REQUEST,
     );
     yield put(loaderStart());
@@ -225,7 +227,7 @@ function* nearByUserList() {
 }
 function* SendRequest() {
   while (true) {
-    const {params, responseCallback} = yield take(
+    const { params, responseCallback } = yield take(
       ActionTypes.SEND_REQUEST.REQUEST,
     );
     yield put(loaderStart());
@@ -256,7 +258,7 @@ function* SendRequest() {
 }
 function* SendRequestList() {
   while (true) {
-    const {params, responseCallback} = yield take(
+    const { params, responseCallback } = yield take(
       ActionTypes.SENT_REQUEST_LIST.REQUEST,
     );
     yield put(loaderStart());
@@ -287,7 +289,7 @@ function* SendRequestList() {
 }
 function* receivedRequest() {
   while (true) {
-    const {params, responseCallback} = yield take(
+    const { params, responseCallback } = yield take(
       ActionTypes.RECEIVED_REQUEST.REQUEST,
     );
     yield put(loaderStart());
@@ -318,7 +320,7 @@ function* receivedRequest() {
 }
 function* acceptRejectRequest() {
   while (true) {
-    const {params, responseCallback} = yield take(
+    const { params, responseCallback } = yield take(
       ActionTypes.ACCEPT_REJECT_REQUEST.REQUEST,
     );
     yield put(loaderStart());
@@ -349,7 +351,7 @@ function* acceptRejectRequest() {
 }
 function* friendList() {
   while (true) {
-    const {params, responseCallback} = yield take(
+    const { params, responseCallback } = yield take(
       ActionTypes.FRIEND_LIST.REQUEST,
     );
     yield put(loaderStart());
@@ -380,7 +382,7 @@ function* friendList() {
 }
 function* myPost() {
   while (true) {
-    const {params, responseCallback} = yield take(ActionTypes.MY_POST.REQUEST);
+    const { params, responseCallback } = yield take(ActionTypes.MY_POST.REQUEST);
     yield put(loaderStart());
     try {
       const response = yield call(
@@ -410,7 +412,7 @@ function* myPost() {
 
 function* listLikes() {
   while (true) {
-    const {params, responseCallback} = yield take(
+    const { params, responseCallback } = yield take(
       ActionTypes.LIKES_LIST.REQUEST,
     );
     yield put(loaderStart());
@@ -442,7 +444,7 @@ function* listLikes() {
 
 function* deleteComment() {
   while (true) {
-    const {params, responseCallback} = yield take(
+    const { params, responseCallback } = yield take(
       ActionTypes.DELETE_COMMENT.REQUEST,
     );
     yield put(loaderStart());
@@ -473,7 +475,7 @@ function* deleteComment() {
 }
 function* deletePost() {
   while (true) {
-    const {params, responseCallback} = yield take(
+    const { params, responseCallback } = yield take(
       ActionTypes.DELETE_POST.REQUEST,
     );
     console.log('paramsindeletepost', params);
@@ -507,7 +509,7 @@ function* deletePost() {
 
 function* profileDetails() {
   while (true) {
-    const {params, responseCallback} = yield take(
+    const { params, responseCallback } = yield take(
       ActionTypes.PROFILE_DETAILS.REQUEST,
     );
     yield put(loaderStart());
@@ -538,7 +540,7 @@ function* profileDetails() {
 }
 function* getTermsAndCondition() {
   while (true) {
-    const {params, responseCallback} = yield take(
+    const { params, responseCallback } = yield take(
       ActionTypes.GET_TERMSCONDITION.REQUEST,
     );
     yield put(loaderStart());
@@ -575,7 +577,7 @@ function* getTermsAndCondition() {
 
 function* getPrivacy() {
   while (true) {
-    const {params, responseCallback} = yield take(
+    const { params, responseCallback } = yield take(
       ActionTypes.GET_PRIVACY.REQUEST,
     );
     yield put(loaderStart());
@@ -612,7 +614,7 @@ function* getPrivacy() {
 
 function* getAbout() {
   while (true) {
-    const {params, responseCallback} = yield take(
+    const { params, responseCallback } = yield take(
       ActionTypes.GET_ABOUT.REQUEST,
     );
     yield put(loaderStart());
@@ -649,43 +651,55 @@ function* getAbout() {
 
 function* getNotificationOnOff() {
   while (true) {
-    const {params, responseCallback} = yield take(
-      ActionTypes.GET_NOTIFICATION_ONOFF.REQUEST,
+    const { responseCallback } = yield take(
+      ActionTypes.TOGGLE_NOTIFICATION.REQUEST,
     );
     yield put(loaderStart());
     try {
       const response = yield call(
         callRequest,
-        GET_NOTIFICATION_ONOFF,
+        TOGGLE_NOTIFICATION,
         null,
         '',
         {},
         ApiSauce,
       );
       yield put(loaderStop());
+      
       if (response) {
-        if (responseCallback) {
-          if (response?.data) {
-            responseCallback(response?.data);
-          } else {
+        if (response === "null" || response === null) {
+          console.log('Received null response from the server');
+          Util.DialogAlert("Received an invalid response from the server", 'error');
+          if (responseCallback) {
             responseCallback([]);
+          } 
+        } else {
+          Util.DialogAlert(response.message, 'success');
+          if (responseCallback) {
+            responseCallback(response);
           }
         }
       } else {
-        console.log('errrorr-logged');
+        console.log('Error: Response is null or empty');
+        Util.DialogAlert('Error: No data received', 'error');
+        if (responseCallback) {
+          responseCallback([]);
+        }
       }
     } catch (error) {
-      responseCallback([]);
-      console.log('error?.responseerror?.response', error?.response);
-      // Util.DialogAlert(error?.message);
+      console.log('Error occurred:', error);
+      Util.DialogAlert(error.message);
       yield put(loaderStop());
+      if (responseCallback) {
+        responseCallback([]);
+      }
     }
   }
 }
 
 function* uploadImage() {
   while (true) {
-    const {params, responseCallback} = yield take(
+    const { params, responseCallback } = yield take(
       ActionTypes.UPLOAD_IMAGE.REQUEST,
     );
     yield put(loaderStart());
@@ -717,7 +731,7 @@ function* uploadImage() {
 
 function* createHeedback() {
   while (true) {
-    const {params, responseCallback} = yield take(
+    const { params, responseCallback } = yield take(
       ActionTypes.CREATE_HEEDBACK.REQUEST,
     );
     yield put(loaderStart());

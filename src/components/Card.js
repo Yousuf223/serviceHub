@@ -16,14 +16,14 @@ import { T } from 'ramda';
 
 const { width } = Dimensions.get('screen');
 
-const Card = ({ onPress, item, cardStyle }) => {
+const Card = ({ onPress, item,userName,userImage, cardStyle }) => {
   const [like, setLike] = useState(false);
-  console.log('itemitemitem', item?.userId)
+
   return (
     <TouchableOpacity activeOpacity={0.8} onPress={onPress} style={[styles.card, cardStyle]}>
       <View style={{ flexDirection: 'row', alignItems: 'center', marginTop: 20, paddingLeft: 20 }}>
-        <Image style={styles.userImg} source={item?.userId?.profilePicture ? {uri:item?.userId?.profilePicture} :  appIcons.user} />
-        <Text>{item?.userId?.firstName + ' ' +item?.userId?.lastName }</Text>
+        <Image style={styles.userImg} source={userImage} />
+        <Text>{userName }</Text>
       </View>
       <Image style={styles.post} source={{uri:item?.media[0]?.mediaUrl}} />
       <View style={{ paddingHorizontal: 10, paddingVertical: 0 }}>

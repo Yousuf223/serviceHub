@@ -32,6 +32,15 @@ const styles = StyleSheet.create({
     // paddingVertical:5,
     paddingLeft:20,
     paddingBottom:10
-  }
+  },
+  listempty: {
+    // flex: 1,
+    alignItems: 'center',
+    marginTop: 75
+},
+txtlistempty: {
+    color: colors.black,
+    fontWeight:'500'
+},
 });
 export default styles;

@@ -96,9 +96,9 @@ export const UPDATE_PROFILE = {
   type: REQUEST_TYPE.PATCH,
 };
 export const CHANGE_PASSWORD = {
-  route: 'change-password',
+  route: 'auth/change-password',
   access_token_required: true,
-  type: REQUEST_TYPE.POST,
+  type: REQUEST_TYPE.PATCH,
 };
 export const ADD_PROFILE_PICTURE = {
   route: 'users/me/upload-profile-picture',
@@ -159,6 +159,11 @@ export const GET_NOTIFICATION_ONOFF = {
   route: 'users/preferences',
   access_token_required: true,
   type: REQUEST_TYPE.GET,
+};
+export const TOGGLE_NOTIFICATION = {
+  route: 'auth/toggle-notifications',
+  access_token_required: true,
+  type: REQUEST_TYPE.PATCH,
 };
 export const GET_PROFILE = {
   route: 'users/me',

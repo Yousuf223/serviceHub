@@ -114,9 +114,9 @@ const ServiceProviderDetail = ({ route }) => {
       console.log('Response:', response.data);
       if (response) {
         dispatch(loaderStop());
-        dispatch(loginUser(response.data));
+        dispatch(loginUser(response.payload?.data));
         Toast.show({
-          text1: response?.message,
+          text1: response?.payload?.message,
           type: 'success',
           visibilityTime: 3000,
         });

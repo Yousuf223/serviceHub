@@ -6,7 +6,7 @@ import {
   logoutUser,
   loginCurrentUser,
 } from '../redux/actions/authAction';
-import { loaderStart, loaderStop , removeDataForLogoutUser,} from '../redux/actions/appAction';
+import { loaderStart, loaderStop, removeDataForLogoutUser, } from '../redux/actions/appAction';
 import API_URL, {
   LOGIN,
   callRequest,
@@ -21,7 +21,7 @@ import API_URL, {
   FORGOT_PASSWORD,
   RESEND_OTP,
   SOCIAL_LOGIN,
-  WEB_SOCKET_URL,ADD_PROFILE_PICTURE
+  WEB_SOCKET_URL, ADD_PROFILE_PICTURE
 } from '../config/WebService';
 import ApiSauce from '../services/ApiSauce';
 import Util from '../utils/Utils';
@@ -49,11 +49,11 @@ function* login() {
             NavService.navigate('CompleteProfile', { role: payload?.role });
             Util.DialogAlert(response.message, 'success');
           }
-          else if(response?.data?.user?.isBussinessDetailsCompleted == false){
+          else if (payload?.role !== 'USER' && response?.data?.user?.isBussinessDetailsCompleted == false) {
             NavService.navigate('ServiceProviderDetail');
             yield put(saveTokenForLoginUser(response?.token));
           }
-           else {
+          else {
             yield put(saveTokenForLoginUser(response?.token));
             yield put(loginUser(response?.data?.user));
             Util.DialogAlert('Login Successfully', 'success');
@@ -69,7 +69,7 @@ function* login() {
 }
 function* signUp() {
   while (true) {
-    const { payload, role } = yield take(ActionTypes.SIGNUP_USER.REQUEST);
+    const { payload } = yield take(ActionTypes.SIGNUP_USER.REQUEST);
     yield put(loaderStart());
     try {
       const response = yield call(
@@ -88,8 +88,8 @@ function* signUp() {
           email: payload.email,
           password: payload.password,
           confirmPassword: payload.confirmPassword,
-          role:payload.role,
-          otp:response.data
+          role: payload.role,
+          otp: response.data
         }
         // yield put(setOtpData(paramData));
         NavService.navigate('Otp', {
@@ -99,10 +99,10 @@ function* signUp() {
         Util.DialogAlert('No response received');
       }
     } catch (error) {
-      console.log('error=======errror', error);
+      console.log('Yousuf', error?.message);
       yield put(loaderStop());
       if (error && error.message) {
-        Util.DialogAlert(error.message[0]?.message);
+        Util.DialogAlert(error.message);
       } else {
         Util.DialogAlert('Something went wrong!');
       }
@@ -130,7 +130,7 @@ function* oTPVerify() {
       if (response) {
         yield put(saveTokenForLoginUser(response?.token));
         Util.DialogAlert(response.message, 'success');
-        NavService.navigate('CompleteProfile',{role:payload.role});
+        NavService.navigate('CompleteProfile', { role: payload.role });
       } else {
         Util.DialogAlert(response.message);
       }
@@ -156,7 +156,7 @@ function* resendOTP() {
       );
       yield put(loaderStop());
       if (response) {
-        console.log('responseresponseresponse',response?.data)
+        console.log('responseresponseresponse', response?.data)
         NavService.navigate('Otp', {
           otp: response.data.otp
         });
@@ -224,11 +224,11 @@ function* completeProfile() {
         ApiSauce,
       );
       yield put(loaderStop());
-      console.log('=====response',response)
+      console.log('=====response', response)
       if (response) {
-        const data  = {
-          email:'abc@g.com',
-          password:1233455
+        const data = {
+          email: 'abc@g.com',
+          password: 1233455
         }
         yield put(loginUser(data));
         Util.DialogAlert('Profile Completed Successfully', 'success');
@@ -236,7 +236,7 @@ function* completeProfile() {
         Util.DialogAlert(response.message);
       }
     } catch (error) {
-  console.log('errorerrorerror',error)
+      console.log('errorerrorerror', error)
       yield put(loaderStop());
       Util.DialogAlert(error.error);
     }
@@ -244,7 +244,7 @@ function* completeProfile() {
 }
 function* updateProfile() {
   while (true) {
-    const { payload ,responseCallback} = yield take(ActionTypes.UPDATE_PROFILE.REQUEST);
+    const { payload, responseCallback } = yield take(ActionTypes.UPDATE_PROFILE.REQUEST);
     yield put(loaderStart());
     try {
       const response = yield call(
@@ -260,7 +260,7 @@ function* updateProfile() {
         if (responseCallback) {
           responseCallback(response);
         }
-      
+
         Util.DialogAlert('Profile updated Successfully', 'success');
       } else {
         // Util.DialogAlert(response.message);
@@ -323,7 +323,7 @@ function* resetPassword() {
       );
       yield put(loaderStop());
       console.log('payloadofresendpassword', response);
-      if (response.status.success === true) {   
+      if (response.status.success === true) {
         Util.DialogAlert(response.message, 'success')
         NavService.navigate('Login');
       } else {
@@ -354,7 +354,7 @@ function* forgotPassword() {
         NavService.navigate('Otp', {
           screenName: 'forgot',
           email: payload,
-          otp:response.data.otp
+          otp: response.data.otp
         });
         Util.DialogAlert(response.message, 'success');
       } else {
@@ -381,10 +381,10 @@ function* changePassword() {
         ApiSauce,
       );
       yield put(loaderStop());
-      if (response.status === 1) {
+      if (response) {
         console.log('payloadofChangepassword', response);
         Util.DialogAlert(response.message, 'success')
-
+        NavService.goBack()
       } else {
         Util.DialogAlert(response.message);
       }
@@ -397,7 +397,7 @@ function* changePassword() {
 }
 function* addProfilePicture() {
   while (true) {
-    const { payload,responseCallback } = yield take(ActionTypes.ADD_PROFILE_PICTURE.REQUEST);
+    const { payload, responseCallback } = yield take(ActionTypes.ADD_PROFILE_PICTURE.REQUEST);
     yield put(loaderStart());
     try {
       const response = yield call(
@@ -410,7 +410,7 @@ function* addProfilePicture() {
       );
       yield put(loaderStop());
       if (response.status.success === true) {
-        if(responseCallback){
+        if (responseCallback) {
           responseCallback(response)
         }
         console.log('payloadofChangepassword', response);

@@ -7,22 +7,50 @@ import Img from '../../../../components/Img';
 import { appIcons } from '../../../../assets';
 import { colors } from '../../../../utils';
 import NavService from '../../../../helpers/NavService';
-import { deleteProfile, logoutUser } from '../../../../redux/actions/authAction';
-import ConfirmationModal from '../../../../containers/Popup/ConfirmationModal/ConfirmationModal';
 import { connect } from 'react-redux';
-
+import { deleteProfile, logoutUser, } from '../../../../redux/actions/authAction';
+import ConfirmationModal from '../../../../containers/Popup/ConfirmationModal/ConfirmationModal';
+import { loaderStart, loaderStop, toggleNotification } from '../../../../redux/actions/appAction';
+import axios from 'axios';
 class Settings extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      notification: false, 
-      modalVisible: false, 
+      notification: false,
+      modalVisible: false
     };
   };
 
   render() {
-    const { notification ,modalVisible } = this.state;
+    const { notification, modalVisible } = this.state;
     const { user } = this?.props;
+
+    const token = this.props.userToken
+    const onToggle = async () => {
+      try {
+        this.props.loaderStart()
+        const response = await axios.patch(
+          'https://sn6jm18m-5000.inc1.devtunnels.ms/api/v1/auth/toggle-notifications',
+          null,
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            }
+          }
+        );
+        if (response?.data?.data) {
+          this.props.loaderStop()
+          this.setState({ notification: !response?.data?.data?.isNotify })
+        }
+        console.log('API Response:', response?.data?.data);
+      } catch (error) {
+        this.props.loaderStop()
+        console.error('Error during API request:', error);
+      }
+    };
+
+
+
     return (
       <AppBackground
         back
@@ -38,7 +66,7 @@ class Settings extends Component {
                   src={appIcons.notification}
                   style={styles.icon}
                   resizeMode={"contain"}
-                  tintColor={colors.yellow}
+                  tintColor={colors.white}
                 />
                 <Text style={styles.contTitle}>
                   Push Notifications
@@ -46,14 +74,14 @@ class Settings extends Component {
               </View>
               <ToggleSwitch
                 isOn={notification}
-                onToggle={() => this.setState({ notification: !notification })}
+                onToggle={() => onToggle()}
                 trackOnStyle={styles.trackonstyle}
                 trackOffStyle={styles.trackoff}
                 thumbOnStyle={styles.thumb}
                 thumbOffStyle={styles.thumboff}
-                onColor={colors.gray}
-                offColor={colors.gray}
-                circleColor={notification ? colors.primary : colors.white}
+                onColor={colors.white}
+                offColor={colors.white}
+                circleColor={notification ? colors.primary : colors.black}
                 size="small"
               />
             </View>
@@ -69,7 +97,7 @@ class Settings extends Component {
                   src={appIcons.lock}
                   style={styles.icon}
                   resizeMode={"contain"}
-                  tintColor={colors.primary}
+                  tintColor={colors.white}
                 />
                 <Text style={styles.contTitle}>
                   Change Password
@@ -77,81 +105,6 @@ class Settings extends Component {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity
-              activeOpacity={0.9}
-              style={[styles.flexRow, styles.cont]}
-              onPress={() => { Linking.openURL('https://www.google.com'); }}
-            >
-              <View style={[styles.flexRow]}>
-                <Img
-                  local
-                  src={appIcons.termsConditions}
-                  style={styles.icon}
-                  resizeMode={"contain"}
-                  tintColor={colors.primary}
-                />
-                <Text style={styles.contTitle}>
-                  Terms & Conditions
-                </Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              activeOpacity={0.9}
-              style={[styles.flexRow, styles.cont]}
-              onPress={() => { Linking.openURL('https://www.google.com'); }}
-            >
-              <View style={[styles.flexRow]}>
-                <Img
-                  local
-                  src={appIcons.privacyPolicy}
-                  style={styles.icon}
-                  resizeMode={"contain"}
-                />
-                <Text style={styles.contTitle}>
-                  Privacy Policy
-                </Text>
-              </View>
-            </TouchableOpacity>
-            <TouchableOpacity
-              activeOpacity={0.9}
-              style={[styles.flexRow, styles.cont]}
-              onPress={() => this.setState({ modalVisible: true })}
-            >
-              <ConfirmationModal
-                isModalVisible={modalVisible}
-                togglePopup={() =>
-                  this.setState({ modalVisible: false })
-                }
-                Title={'Delete Profile'}
-                SubTitle={'Are you sure you want to delete profile?'}
-                onPress={() => {
-                  let payload = {
-                    user_id: user?._id
-                  }
-                  this.setState({ modalVisible: false })
-                  setTimeout(() => {
-                    this.props.deleteProfile(user?._id);
-                    this.props.logoutUser();
-                  }, 850)
-                }}
-                btnTitle={'Delete'}
-                close
-                logout
-                onPress2={() => this.setState({ modalVisible: false })}
-              />
-              <View style={[styles.flexRow]}>
-                <Img
-                  local
-                  src={appIcons.trash}
-                  style={styles.icon}
-                  resizeMode={"contain"}
-                />
-                <Text style={styles.contTitle}>
-                  Delete Profile
-                </Text>
-              </View>
-            </TouchableOpacity>
           </View>
         </View>
       </AppBackground>
@@ -161,8 +114,8 @@ class Settings extends Component {
 
 function mapStateToProps({ authReducer }) {
   return {
-    user: authReducer?.user,
+    userToken: authReducer?.userToken,
   };
 }
-const actions = { deleteProfile, logoutUser };
+const actions = { deleteProfile, logoutUser, toggleNotification, loaderStop, loaderStart };
 export default connect(mapStateToProps, actions)(Settings);

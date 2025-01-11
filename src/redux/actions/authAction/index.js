@@ -41,11 +41,10 @@ export function toggleVerificationPopUp(payload) {
     payload,
   };
 }
-export function signUpUser(payload,role) {
+export function signUpUser(payload) {
   return {
     type: ActionTypes.SIGNUP_USER.REQUEST ,
     payload,
-    role
   };
 }
 export function resendOTP(payload,responseCallback) {

@@ -8,14 +8,15 @@ const styles = StyleSheet.create({
   },
 
   input: {
-    width: "100%"
+    width: "90%"
   },
 
   SubmitBtn: {
     borderRadius: 10,
     backgroundColor: colors.primary,
     marginTop: 20,
-    width: "100%",
+    width: "90%",
+    alignSelf:'center'
   },
 
   submitBtnTitle: {

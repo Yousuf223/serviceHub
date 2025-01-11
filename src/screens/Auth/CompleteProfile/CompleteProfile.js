@@ -109,11 +109,14 @@ const CompleteProfile = ({ route }) => {
           'Authorization': `Bearer ${token}`,
         },
       });
-      console.log('responseresponse',response.data)
       if (response) {
+        console.log('sadsada',response?.data)
         if (role === 'USER') {
+          NavService.navigate('Login',{
+            role: role
+        })
           dispatch(loaderStop())
-          dispatch(loginUser(response.data))
+          // dispatch(loginUser(response.data))
         }else{
           dispatch(loaderStop())
           NavService.navigate('ServiceProviderDetail')
@@ -122,7 +125,7 @@ const CompleteProfile = ({ route }) => {
       }
 
     } catch (error) {
-      console.error('Error uploading form data:', error?.response);
+      console.error('Error uploading form data:', error?.response?.data);
       dispatch(loaderStop())
       // You could also show an error notification to the user here
     }

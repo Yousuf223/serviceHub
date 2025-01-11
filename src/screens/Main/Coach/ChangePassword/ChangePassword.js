@@ -23,7 +23,7 @@ class ChangePassword extends Component {
 
   onSubmit = () => {
     const { currentPassword, newPassword, confirmPassword } = this.state;
-    const { user } = this?.props
+    const { user } = this?.props;
     if (!currentPassword)
       return Toast.show({
         text1: `Current Password field can't be empty.`,
@@ -63,14 +63,13 @@ class ChangePassword extends Component {
       });
     else {
       let payload = {
-        user_id: user?._id,
-        old_password: currentPassword,
-        new_password: newPassword,
-        confirm_new_password: confirmPassword
+        oldPassword: currentPassword,
+        newPassword: newPassword,
+        confirmNewPassword: confirmPassword
       }
       console.log('payload-changepass', payload)
       this.props.changePassword(payload)
-      setTimeout(() => { NavService.goBack() }, 850)
+      // setTimeout(() => { NavService.goBack() }, 850)
     }
   };
 

@@ -9,6 +9,8 @@ import Profile from '../../screens/Main/Coach/Profile/Profile';
 import Message from '../../screens/Main/Coach/Message';
 import Chat from '../../screens/Main/Coach/Chat';
 import CreatePost from '../../screens/Main/Coach/CreatePost';
+import ChangePassword from '../../screens/Main/Coach/ChangePassword';
+import Settings from '../../screens/Main/Coach/Settings';
 
 
 
@@ -32,6 +34,8 @@ const CoachNavigation = ({ initialRoute }) => {
       <Stack.Screen name="Message" component={Message} />
       <Stack.Screen name="Chat" component={Chat} />
       <Stack.Screen name="CreatePost" component={CreatePost} />
+      <Stack.Screen name="ChangePassword" component={ChangePassword} />
+      <Stack.Screen name="Settings" component={Settings} />
     </Stack.Navigator>
   );
 };

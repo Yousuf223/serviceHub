@@ -1,44 +1,35 @@
-import React, { useEffect, useRef, useState } from 'react';
-import {
-  FlatList,
-  View,
-  Image,
-  Text,
-  TouchableOpacity,
-  Keyboard,
-  TextInput,
-  RefreshControl,
-  TouchableHighlight,
-  Platform,
-} from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { FlatList, View, Text } from 'react-native';
 import AppBackground from '../../../../components/AppBackground';
 import CustomTextInput from '../../../../components/CustomTextInput';
 import { appIcons } from '../../../../assets';
 import styles from './styles';
 import Card from '../../../../components/Card';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getEventList } from '../../../../redux/actions/appAction';
+import { useIsFocused } from '@react-navigation/native';
 
 const Home = () => {
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
+  const isFocused = useIsFocused();
   const [search, setSearch] = useState('');
-  const [data, setData] = useState([])
-
+  const [data, setData] = useState([]);
+  const userData = useSelector((state) => state?.authReducer?.user)
+  console.log(userData, 'userDatauserData')
   useEffect(() => {
-    dispatch(getEventList(response => {
-      console.log('Resend OTP Response:', response);
-      setData(response)
+    if (isFocused) {
+      dispatch(getEventList(response => {
+        setData(response);
+      }));
+    }
+  }, [isFocused]);
 
-    }));
-  }, [])
   return (
     <AppBackground
       menu
       title={'Home'}
       Cart={true}
       notification
-      // video={true}
-      onVideoPress={() => togglePopUp()}
       marginHorizontal={false}>
       <CustomTextInput
         leftIcon={appIcons.search}
@@ -54,13 +45,19 @@ const Home = () => {
         <FlatList
           data={data}
           showsVerticalScrollIndicator={false}
-          keyExtractor={(item, index) => index?.toString()}
+          keyExtractor={(item, index) => index.toString()}
           contentContainerStyle={{ flexGrow: 1, paddingBottom: '20%' }}
-          renderItem={({ item, index }) => {
-            return (
-              <Card item={item} />
-            )
-          }}
+          renderItem={({ item }) => (
+            <Card
+            userName={userData?.firstName + ' ' + userData?.lastName}
+             userImage={userData?.profilePicture ? { uri: userData?.profilePicture } : appIcons.userPlaceholder} 
+             item={item} />
+          )}
+          ListEmptyComponent={() => (
+            <View style={styles.listempty}>
+              <Text style={styles.txtlistempty}>No Service Found</Text>
+            </View>
+          )}
         />
       </View>
     </AppBackground>

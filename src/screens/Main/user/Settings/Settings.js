@@ -8,9 +8,10 @@ import { appIcons } from '../../../../assets';
 import { colors } from '../../../../utils';
 import NavService from '../../../../helpers/NavService';
 import { connect } from 'react-redux';
-import { deleteProfile, logoutUser } from '../../../../redux/actions/authAction';
+import { deleteProfile, logoutUser, } from '../../../../redux/actions/authAction';
 import ConfirmationModal from '../../../../containers/Popup/ConfirmationModal/ConfirmationModal';
-
+import { loaderStart, loaderStop, toggleNotification } from '../../../../redux/actions/appAction';
+import axios from 'axios';
 class Settings extends Component {
   constructor(props) {
     super(props);
@@ -23,6 +24,33 @@ class Settings extends Component {
   render() {
     const { notification, modalVisible } = this.state;
     const { user } = this?.props;
+
+    const token = this.props.userToken
+    const onToggle = async () => {
+      try {
+        this.props.loaderStart()
+        const response = await axios.patch(
+          'https://sn6jm18m-5000.inc1.devtunnels.ms/api/v1/auth/toggle-notifications',
+          null,
+          {
+            headers: {
+              'Authorization': `Bearer ${token}`,
+            }
+          }
+        );
+        if (response?.data?.data) {
+          this.props.loaderStop()
+          this.setState({ notification: !response?.data?.data?.isNotify })
+        }
+        console.log('API Response:', response?.data?.data);
+      } catch (error) {
+        this.props.loaderStop()
+        console.error('Error during API request:', error);
+      }
+    };
+
+
+
     return (
       <AppBackground
         back
@@ -46,14 +74,14 @@ class Settings extends Component {
               </View>
               <ToggleSwitch
                 isOn={notification}
-                onToggle={() => this.setState({ notification: !notification })}
+                onToggle={() => onToggle()}
                 trackOnStyle={styles.trackonstyle}
                 trackOffStyle={styles.trackoff}
                 thumbOnStyle={styles.thumb}
                 thumbOffStyle={styles.thumboff}
                 onColor={colors.white}
                 offColor={colors.white}
-                circleColor={notification ? colors.secondary : colors.black}
+                circleColor={notification ? colors.primary : colors.black}
                 size="small"
               />
             </View>
@@ -86,8 +114,8 @@ class Settings extends Component {
 
 function mapStateToProps({ authReducer }) {
   return {
-    user: authReducer?.user,
+    userToken: authReducer?.userToken,
   };
 }
-const actions = { deleteProfile, logoutUser };
+const actions = { deleteProfile, logoutUser, toggleNotification, loaderStop, loaderStart };
 export default connect(mapStateToProps, actions)(Settings);

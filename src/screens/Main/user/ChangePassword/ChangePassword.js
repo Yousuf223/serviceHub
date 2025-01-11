@@ -63,14 +63,13 @@ class ChangePassword extends Component {
       });
     else {
       let payload = {
-        user_id: user?._id,
-        old_password: currentPassword,
-        new_password: newPassword,
-        confirm_new_password: confirmPassword
+        oldPassword: currentPassword,
+        newPassword: newPassword,
+        confirmNewPassword: confirmPassword
       }
       console.log('payload-changepass', payload)
       this.props.changePassword(payload)
-      setTimeout(() => { NavService.goBack() }, 850)
+      // setTimeout(() => { NavService.goBack() }, 850)
     }
   };
 

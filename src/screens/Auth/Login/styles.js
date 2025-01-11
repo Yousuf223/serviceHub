@@ -19,13 +19,14 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   subText: {
-    fontSize: 14,
-    fontWeight: '300',
-    color: colors.white,
+    fontSize: 12,
+    fontWeight: '400',
+    color: colors.black,
     marginVertical: 20,
     textAlign: 'right',
     textDecorationLine: 'underline',
     marginTop: 32,
+    marginRight:20
   },
   textNormal: {
     fontSize: 13,

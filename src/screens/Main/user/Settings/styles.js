@@ -13,7 +13,7 @@ const styles = StyleSheet.create({
     ...appStyles.w100,
     ...appStyles.alignCenter,
     ...appStyles.justifySpaceBetween,
-    backgroundColor: colors.primary,
+    backgroundColor: colors.black,
     marginVertical: 5,
     paddingHorizontal: 15,
     paddingVertical: 20,

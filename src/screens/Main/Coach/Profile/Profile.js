@@ -25,7 +25,6 @@ const Profile = () => {
     const [data, setData] = useState([
         { title: 'First Name', subTitle: userData?.firstName },
         { title: 'Last Name', subTitle: userData?.lastName },
-        { title: 'Date Of Birth', subTitle: '10-20-204' },
         { title: 'Gender', subTitle: userData?.gender },
         { title: 'Phone', subTitle: userData?.contactNumber }
     ])

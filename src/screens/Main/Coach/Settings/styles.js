@@ -5,18 +5,21 @@ import { colors } from '../../../../utils';
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    width: '100%',
+    width: '90%',
+    alignSelf:'center'
   },
 
   cont: {
     ...appStyles.w100,
     ...appStyles.alignCenter,
     ...appStyles.justifySpaceBetween,
-    backgroundColor: colors.lightBlack,
+    backgroundColor: colors.black,
     marginVertical: 5,
     paddingHorizontal: 15,
     paddingVertical: 20,
-    borderRadius: 10
+    borderRadius: 10,
+    // borderWidth:1,
+    // borderColor:colors.primary
   },
 
   flexRow: {
@@ -42,24 +45,24 @@ const styles = StyleSheet.create({
     height: 24,
     borderColor: colors.white,
     borderWidth: 1
-  },
-  thumb: {
+},
+thumb: {
     height: 18,
     width: 18,
     marginLeft: 0,
-  },
+},
 
-  trackoff: {
+trackoff: {
     width: 42,
     height: 24,
     borderColor: colors.white,
     borderWidth: 1
-  },
-  thumboff: {
+},
+thumboff: {
     height: 18,
     width: 18,
     marginLeft: 3,
-  },
+},
 });
 
 export default styles;
