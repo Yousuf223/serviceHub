@@ -55,7 +55,7 @@ const Login = ({ navigation,route}) => {
   return (
     <CustomBackground showLogo={false} titleText={'Sign In'}>
       <View style={styles.container}>
-        <View style={[styles.container, {marginTop: 20}]}>
+        <View style={[styles.container, {marginTop: "10%"}]}>
           <View style={styles.container1}>
             <View style={styles.icon}>
               <Text style={styles.iconText}>🔧</Text>

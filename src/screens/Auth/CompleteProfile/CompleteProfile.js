@@ -40,6 +40,7 @@ const CompleteProfile = ({ route }) => {
   const role = route?.params?.role
   console.log('rolerole', role)
   const actionSheetGenderRef = useRef();
+    const actionSheetServiceRef = useRef();
   const phoneInput = useRef();
   const dispatch = useDispatch()
   const token = useSelector((state) => state.authReducer.userToken)
@@ -49,6 +50,7 @@ const CompleteProfile = ({ route }) => {
   const [address, setAddress] = useState('');
   const [profileImage, setProfileImage] = useState(null);
   const [lienceImage, setLienceImage] = useState(null);
+  const [service, setService] = useState('');
   const [gender, setGender] = useState(null);
   const [message, setMessage] = useState('');
   const [keyboardStatus, setKeyboardStatus] = useState(false);
@@ -72,6 +74,10 @@ const CompleteProfile = ({ route }) => {
     if (!lastName) return 'Last Name field can’t be empty';
     if (!gender) return 'Gender field can’t be empty';
     if (!phoneNumber) return 'Phone Number field can’t be empty';
+    if(role == 'SERVICEPROVIDER'){
+      if (!service) return 'Category field can’t be empty';
+    }
+   
     if (!profileImage) return 'Please Select Profile Image';
     return null;
   };
@@ -92,6 +98,10 @@ const CompleteProfile = ({ route }) => {
     formData.append('lastName', lastName);
     formData.append('gender', gender == 'Male' ? 'male' : 'female');
     formData.append('contactNumber', phoneNumber);
+    if(role=="SERVICEPROVIDER"){
+     formData.append('category', service);
+    }
+
     if (profileImage) {
       formData.append('userProfilePicture', {
         uri: profileImage?.path,
@@ -110,18 +120,18 @@ const CompleteProfile = ({ route }) => {
         },
       });
       if (response) {
-        console.log('sadsada',response?.data)
+        console.log('sadsada', response?.data)
         if (role === 'USER') {
-          NavService.navigate('Login',{
-            role: role
-        })
+          //   NavService.navigate('Login',{
+          //     role: role
+          // })
           dispatch(loaderStop())
-          // dispatch(loginUser(response.data))
-        }else{
+          dispatch(loginUser(response.data?.data?.user))
+        } else {
           dispatch(loaderStop())
-          NavService.navigate('ServiceProviderDetail')
+          NavService.navigate('ServiceProviderDetail',{data:response.data?.data})
         }
-     
+
       }
 
     } catch (error) {
@@ -136,24 +146,15 @@ const CompleteProfile = ({ route }) => {
     setProfileImage({ path, mime, type });
   };
 
-  const lienceImageInGallery = (path, mime, type) => {
-    setLienceImage({ path, mime, type });
-  };
 
-  const saveAddress = address => {
-    setAddress(address);
-  };
 
-  const saveCountry = (city, country) => {
-    setCity(city);
-    setStateField(country);
-  };
+
 
   const { email } = route?.params;
 
   return (
-    <CustomBackground showLogo={false} titleText={'Create Profile'}>
-      <View style={{ marginHorizontal: 6, marginTop: 20 }}>
+    <CustomBackground back={false} showLogo={false} titleText={'Create Profile'}>
+      <View style={{ marginHorizontal: 6, marginTop: '10%' }}>
         <View style={{ alignItems: 'center', alignSelf: 'center' }}>
           <ImagePicker
             onImageChange={(path, mime, type) =>
@@ -208,25 +209,46 @@ const CompleteProfile = ({ route }) => {
                   width: 15,
                   height: 15,
                   resizeMode: 'contain',
-                  tintColor: colors.secondary,
+                  tintColor: colors.primary,
                 }}
                 source={appIcons.arrowDown}
               />
             </TouchableOpacity>
-
+            {role == 'SERVICEPROVIDER' &&<>
+              <Text style={[styles.title, { paddingTop: 10 }]}>
+              Business Category
+            </Text>
+            <TouchableOpacity
+              activeOpacity={0}
+              style={styles.inputstyle}
+              onPress={() => actionSheetServiceRef.current.show()}>
+              <Text style={styles.dateOfbirth}>
+                {service || 'Select Bussiness'}
+              </Text>
+              <Image
+                style={{
+                  width: 15,
+                  height: 15,
+                  resizeMode: 'contain',
+                  tintColor: colors.primary,
+                }}
+                source={appIcons.arrowDown}
+              />
+            </TouchableOpacity>
+            </>}
+    
             <ActionSheetComponent
               ref={actionSheetGenderRef}
               title="Select Gender"
               dataset={['Male', 'Female', 'Other']}
               onPress={setGender}
             />
-            {/* <Text style={styles.title}>Address</Text>
-            <GooglePlaceAutocomplete
-              placeholder={'Address'}
-              callback={saveAddress}
-              rightIcon={true}
-              cityCountry={saveCountry}
-            /> */}
+            <ActionSheetComponent
+              ref={actionSheetServiceRef}
+              title="Select Service"
+              dataset={['Educationist', 'Healthcare', 'Advocasy', 'RealEstate', 'Showroom', 'Salon', 'Gym', 'Hostel']}
+              onPress={setService}
+            />
             <CustomButton
               buttonStyle={styles.buttonStyle}
               title="Submit"

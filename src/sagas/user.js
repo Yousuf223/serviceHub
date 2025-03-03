@@ -6,7 +6,7 @@ import {
   logoutUser,
   loginCurrentUser,
 } from '../redux/actions/authAction';
-import { loaderStart, loaderStop, removeDataForLogoutUser, } from '../redux/actions/appAction';
+import { addType, loaderStart, loaderStop, removeDataForLogoutUser, } from '../redux/actions/appAction';
 import API_URL, {
   LOGIN,
   callRequest,
@@ -56,6 +56,7 @@ function* login() {
           else {
             yield put(saveTokenForLoginUser(response?.token));
             yield put(loginUser(response?.data?.user));
+            yield put(addType(response?.data?.category))
             Util.DialogAlert('Login Successfully', 'success');
           }
         }

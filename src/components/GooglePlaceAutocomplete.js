@@ -121,11 +121,11 @@ const GooglePlaceAutocomplete = ({
     if (details) {
       setHide(false);
       const { geometry } = details;
-      console.log('dfdsfdsfdfdsfsdfjsdlkfjdsf',geometry)
+      console.log('dfdsfdsfdfdsfsdfjsdlkfjdsf',details.formatted_address)
       getAddressFromLatLng(geometry.location.lat, geometry.location.lng)
         .then(({ city, country }) => {
           cityCountry(city, country); // Use the latest values
-          callback(details.formatted_address, geometry);
+          callback(details.formatted_address);
         });
     }
   };
@@ -181,7 +181,10 @@ const GooglePlaceAutocomplete = ({
         //   cityCountry(city1,country1)
         //   callback(formatted_address, geometry);
         // }}
-        onPress={onSelectLocation}
+        onPress={(data, details = null) => {
+          const { formatted_address, geometry } = details;
+          callback(formatted_address, geometry, label);
+        }}
         renderRightButton={renderRightButton} // Render the right button conditionally
         styles={{
           textInput: {
@@ -242,7 +245,6 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: colors.card,
     width: width,
-    ...appStyles.family_Jost_Regular,
   },
 
   locationIcon:{

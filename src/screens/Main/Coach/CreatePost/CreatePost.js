@@ -1,32 +1,62 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   View,
   Image,
   Text,
   TouchableOpacity,
-  TextInput,
   ScrollView,
   Platform,
 } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import AppBackground from '../../../../components/AppBackground';
 import NavService from '../../../../helpers/NavService';
-import { appIcons, appImages } from '../../../../assets';
-import { colors } from '../../../../utils';
+import { appIcons } from '../../../../assets';
 import styles from './styles';
 import CustomButton from '../../../../components/CustomButton';
 import CustomImagePicker from '../../../../components/CustomImagePicker';
-import { Image as ImageCompressor, Video as VideoCompressor } from 'react-native-compressor';
 import { Toast } from 'react-native-toast-message/lib/src/Toast';
-import { createPost, loaderStart, loaderStop } from '../../../../redux/actions/appAction';
 import axios from 'axios';
 import { BASE_URL } from '../../../../config/WebService';
-const CreatePost = ({ route, createPost }) => {
-  const [description, setDescription] = useState('');
-  const dispatch = useDispatch()
+import CustomTextInput from '../../../../components/CustomTextInput';
+import { loaderStart, loaderStop } from '../../../../redux/actions/appAction';
+import { colors } from '../../../../utils';
+import ActionSheetComponent from '../../../../components/ActionSheetComponent';
+import HealthCard from './AddHealthPost';
+
+const daysList = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+const sampleOptions = [
+  'Blood', 'Urine', 'Saliva', 'Stool', 'Sputum', 'Swab', 'Skin Scraping',
+  'Tissue', 'Cerebrospinal Fluid', 'Amniotic Fluid', 'Hair', 'Nail Clipping',
+  'Sweat', 'Breath', 'Semen'
+];
+
+const CreatePost = ({ }) => {
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.authReducer.userToken);
+  const categoryType = useSelector((state) => state.appReducer?.categoryType);
+  console.log('useruseruser',categoryType)
+  const [doctorName, setDoctorName] = useState('');
+  const [speciality, setSpeciality] = useState('');
+  
+    const educationClassesTypeRef = useRef();
+  const [fees, setFees] = useState('');
+  const [days, setDays] = useState([]);
+  const [activeTab, setActiveTab] = useState('Appointment');
   const [image, setImage] = useState([]);
-  const [video, setVideo] = useState([]);
-  const token = useSelector((state) => state.authReducer.userToken)
+  const [startTime, setStartTime] = useState(new Date());
+  const [endTime, setEndTime] = useState(new Date());
+  const [testDescription, setTestDescription] = useState('');
+  const [sampleRequired, setSampleRequired] = useState('');
+  const [urgentFees, setUrgentFees] = useState('');
+  const [normalFees, setNormalFees] = useState('');
+  const [showStartPicker, setShowStartPicker] = useState(false);
+  const [showEndPicker, setShowEndPicker] = useState(false);
+
+  const toggleDaySelection = (day) => {
+    setDays(prev => prev.includes(day) ? prev.filter(d => d !== day) : [...prev, day]);
+  };
+
   const updateImageInGallery = async (path, mime, type) => {
     let multipleImages = [];
     if (Array.isArray(path)) {
@@ -56,130 +86,142 @@ const CreatePost = ({ route, createPost }) => {
       setImage((prevImage) => [...prevImage, imageObject]);
     }
   };
-
   const removeSelectedAsset = (asset) => {
     setImage((prevImage) => prevImage.filter((item) => item.uri !== asset));
   };
-
-
-
   const onSubmit = () => {
-    if (description === '' && image.length === 0) {
-      Toast.show({
-        text1: 'Please post something',
-        type: 'error',
-        visibilityTime: 3000,
-      });
-    } else if (image.length > 10) {
-      Toast.show({
-        text1: 'Images cannot exceed from 10',
-        type: 'error',
-        visibilityTime: 3000,
+    if (activeTab === 'Appointment') {
+      if (!doctorName || !speciality || !fees || days.length === 0 || image.length === 0) {
+        return Toast.show({ text1: 'Please fill all fields', type: 'error', visibilityTime: 3000 });
+      }
+      submitData('health-care/doctor-appointment', {
+        doctorName, speciality, fees,
+        timings: `${startTime.toLocaleTimeString()} - ${endTime.toLocaleTimeString()}`,
+        days,
       });
     } else {
-      dispatch(loaderStart());
-      const payload = new FormData();
-      payload.append('caption', description);
-      image.forEach((item) => {
-        delete item?.tempType;
-        payload.append('AddMedia', item);
+      if (!testDescription || !sampleRequired || !urgentFees || !normalFees || image.length === 0) {
+        return Toast.show({ text1: 'Please fill all fields', type: 'error', visibilityTime: 3000 });
+      }
+      submitData('health-care/lab-test', {
+        testDescription, sampleRequired:sampleRequired, urgentFees, normalFees,
       });
-      axios.post(`${BASE_URL}service-provider/adds`, payload, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Authorization': `Bearer ${token}`,
-        },
-      })
-        .then(response => {
-          console.log('responseresponse',response?.data)
-           Toast.show({
-             text1: response?.data?.message,
-             type: 'success',
-             visibilityTime: 3000,
-           });
-          console.log(response.data);
-          dispatch(loaderStop());
-          setTimeout(() => {
-            NavService.navigate('BottomTabs', { name: 'Home' });
-          }, 3500);
-        })
-        .catch(error => {
-          console.log('errorerror', error?.response)
-          dispatch(loaderStop());
-          Toast.show({
-            text1: 'Failed to create post. Try again.',
-            type: 'error',
-            visibilityTime: 3000,
-          });
-        });
     }
   };
 
-
-
+  const submitData = (endpoint, data) => {
+    console.log('datadata',data)
+    dispatch(loaderStart());
+    const payload = new FormData();
+    
+    Object.keys(data).forEach(key => payload.append(key, data[key]));
+    image.forEach(img => payload.append('AddMedia', img));
+  
+    image.forEach(img => payload.append('AddMedia', img));
+    axios.post(`${BASE_URL}${endpoint}`, payload, {
+      headers: { 
+        'Content-Type': 'multipart/form-data',
+        'Authorization': `Bearer ${token}`
+      },
+    }).then(response => {
+      Toast.show({ text1: response?.data?.message, type: 'success', visibilityTime: 3000 });
+      dispatch(loaderStop());
+      NavService.navigate('BottomTabs', { name: 'Home' });
+    }).catch(() => {
+      dispatch(loaderStop());
+      Toast.show({ text1: 'Failed to create post. Try again.', type: 'error', visibilityTime: 3000 });
+    });
+  };
+  
 
   return (
-    <AppBackground
-      title={'Create Post'}
-      onBack={() => NavService.navigate('BottomTabs', { name: 'Home' })}
-      marginHorizontal={false}>
-      <View>
-
-        <TextInput
-          maxLength={275}
-          style={styles.dec}
-          textAlignVertical="top"
-          multiline
-          editable
-          blurOnSubmit={true}
-          placeholder={'Write something.'}
-          placeholderTextColor={colors.white}
-          value={description}
-          onChangeText={(value) => setDescription(value)}
-        />
-        <ScrollView
-          style={{
-            // position: 'absolute',
-            // zIndex: 100,
-            // bottom: 10,
-            marginHorizontal: 10,
-            paddingRight: Platform.OS === 'android' ? 36 : 25,
-          }}
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}>
-          {image.length > 0 &&
-            image.map((item, index) => (
-              <View key={index + 1} style={{ position: 'relative' }}>
-                <TouchableOpacity
-                  onPress={() => removeSelectedAsset(item.uri)}
-                  style={styles.crossContainer}>
-                  <Text style={styles.cross}>X</Text>
-                </TouchableOpacity>
-                <Image source={{ uri: item.uri }} style={styles.videoStyle} />
-              </View>
-            ))}
-        </ScrollView>
+    <AppBackground title={'Create Post'} onBack={() => NavService.goBack()}>
+      {categoryType == "Educationist" && <HealthCard/>}
+      {categoryType == "Healthcare" &&    <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{paddingBottom:"10%"}}>   
+      <View style={styles.tabContainer}>
+        <TouchableOpacity onPress={() => setActiveTab('Appointment')} style={[styles.tabButton, activeTab === 'Appointment' && styles.activeTab]}>
+          <Text style={activeTab === 'Appointment' && { textAlign: 'center', color: colors.white }}>Appointment</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={() => setActiveTab('LabTest')} style={[styles.tabButton, activeTab === 'LabTest' && styles.activeTab]}>
+          <Text style={activeTab === 'LabTest' && { textAlign: 'center', color: colors.white }}>Lab Test</Text>
+        </TouchableOpacity>
       </View>
+      {activeTab == "Appointment" && <View>      <CustomTextInput placeholder="Doctor Name" value={doctorName} onChangeText={setDoctorName} containerStyle={styles.containerStyle} />
+      <CustomTextInput placeholder="Speciality" value={speciality} onChangeText={setSpeciality} containerStyle={styles.containerStyle} />
+      <CustomTextInput placeholder="Fees" value={fees} onChangeText={setFees} keyboardType="numeric" containerStyle={styles.containerStyle} />
+      <Text style={{ marginHorizontal: 20, marginBottom: 10, color: '#000', fontWeight: '500' }}>Select Days</Text>
+      <View style={styles.selectedDaysContainer}>
+        {daysList.map(day => (
+          <TouchableOpacity key={day} onPress={() => toggleDaySelection(day)} style={[styles.dayButton, days.includes(day) && styles.selectedDay]}>
+            <Text>{day}</Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+      <Text style={{ marginHorizontal: 20, marginBottom: 10, color: '#000', fontWeight: '500' }}>Select Timing</Text>
+      <View style={{ flexDirection: 'row', width: '92%', justifyContent: 'space-between', marginHorizontal: 0, alignSelf: 'center' }}>
+        <TouchableOpacity style={{
+          width: '48%', borderRadius: 10, height: 55, justifyContent: 'center', alignItems: 'center',
+          borderWidth: 1,
+          borderColor: colors.black,
+        }} onPress={() => setShowStartPicker(true)}><Text>Start Time: {startTime.toLocaleTimeString()}</Text></TouchableOpacity>
+        {showStartPicker && <DateTimePicker value={startTime} mode="time" onChange={(e, date) => { setShowStartPicker(false); if (date) setStartTime(date); }} />}
 
-      <View style={styles.row}>
-        <CustomImagePicker
-          isMultiple={true}
-          onImageChange={(path, mime, type) => {
-            updateImageInGallery(path, mime, type);
-          }}
-          style={{ justifyContent: 'flex-end' }}>
-          {image.length < 10 && (
-            <View style={styles.rowIcons}>
-              <Image style={styles.icons} source={appIcons.photos} />
-              <Text style={styles.title}>Photos</Text>
+        <TouchableOpacity style={{
+          width: '48%', borderRadius: 10, height: 55, justifyContent: 'center', alignItems: 'center',
+          borderWidth: 1,
+          borderColor: colors.black,
+        }} onPress={() => setShowEndPicker(true)}><Text>End Time: {endTime.toLocaleTimeString()}</Text></TouchableOpacity>
+        {showEndPicker && <DateTimePicker value={endTime} mode="time" onChange={(e, date) => { setShowEndPicker(false); if (date) setEndTime(date); }} />}
+      </View></View>}
+      {activeTab == "LabTest" &&<View>
+        <CustomTextInput placeholder="Test Description" value={testDescription} onChangeText={setTestDescription} containerStyle={styles.containerStyle} />
+        <CustomTextInput placeholder="Urgent Fees" value={urgentFees} onChangeText={setUrgentFees} keyboardType="numeric" containerStyle={styles.containerStyle} />
+        <CustomTextInput placeholder="Normal Fees" value={normalFees} onChangeText={setNormalFees} keyboardType="numeric" containerStyle={styles.containerStyle} />
+        <TouchableOpacity
+                activeOpacity={0}
+                style={styles.inputstyle}
+                onPress={() => educationClassesTypeRef.current.show()}>
+                <Text style={styles.dateOfbirth}>
+                  {sampleRequired || 'Select Sample'}
+                </Text>
+                <Image
+                  style={{
+                    width: 15,
+                    height: 15,
+                    resizeMode: 'contain',
+                    tintColor: colors.primary,
+                  }}
+                  source={appIcons.arrowDown}
+                />
+              </TouchableOpacity>
+        <ActionSheetComponent
+                ref={educationClassesTypeRef}
+                title="Select Sample Options"
+                dataset={sampleOptions}
+                onPress={setSampleRequired}
+              />
+        </View>}
+      <CustomImagePicker isMultiple onImageChange={updateImageInGallery}>
+        <Text style={{ marginHorizontal: 20, marginBottom: 10, color: '#000', fontWeight: '500', marginTop: 10 }}>Add Photos</Text>
+      </CustomImagePicker>
+      <View style={{ flexWrap: 'wrap', flexDirection: 'row', marginHorizontal: 20, }}>
+        {image.length > 0 &&
+          image.map((item, index) => (
+            <View key={index + 1} style={{ position: 'relative' }}>
+              <TouchableOpacity
+                onPress={() => removeSelectedAsset(item.uri)}
+                style={styles.crossContainer}>
+                <Text style={styles.cross}>X</Text>
+              </TouchableOpacity>
+              <Image source={{ uri: item.uri }} style={styles.videoStyle} />
             </View>
-          )}
-        </CustomImagePicker>
+          ))}
       </View>
       <CustomButton buttonStyle={styles.buttonStyle} onPress={onSubmit} title="Post" />
+      </ScrollView>}
+   
     </AppBackground>
   );
 };
 
-const actions = { createPost };
-export default connect(null, actions)(CreatePost);
+export default CreatePost;

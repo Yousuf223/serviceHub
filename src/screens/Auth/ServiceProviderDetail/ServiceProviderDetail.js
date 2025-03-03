@@ -34,24 +34,25 @@ import AppBackground from '../../../components/AppBackground';
 import GooglePlaceAutocomplete from '../../../components/GooglePlaceAutocomplete';
 import axios from 'axios';
 import { BASE_URL } from '../../../config/WebService';
-import { loaderStart, loaderStop } from '../../../redux/actions/appAction';
+import { addType, loaderStart, loaderStop } from '../../../redux/actions/appAction';
 
 const ServiceProviderDetail = ({ route }) => {
-  const actionSheetGenderRef = useRef();
+  const educationInstituteTypeRef = useRef();
+  const educationClassesTypeRef = useRef();
   const actionSheetServiceRef = useRef();
+  const actionHospitalTypeRef = useRef();
   const dispatch = useDispatch()
   const phoneInput = useRef();
   const token = useSelector((state) => state.authReducer.userToken)
-  console.log('tokentoken', token)
+  const category = route?.params?.data?.category
   const [businessName, setBusinessName] = useState('');
   const [lastName, setLastName] = useState('');
-  const [service, setService] = useState('');
-  const [address, setAddress] = useState('');
-  const [profileImage, setProfileImage] = useState(null);
-  const [lienceImage, setLienceImage] = useState(null);
-  const [isDatePickerVisible, setIsDatePickerVisible] = useState(false);
-  const [gender, setGender] = useState(null);
-  const { role } = useSelector(state => state?.authReducer);
+  const [educationType, setEducationType] = useState('');
+  const [educationClassesType, setEducationClassesType] = useState('');
+  const [educationInstituteType, setEducationInstituteType] = useState("")
+  const [hospitalName, setHospitalName] = useState('');
+  const [hospitalAddress, setHospitalAddress] = useState('');
+  const [hospitalType, setHospitalType] = useState('');
   const [message, setMessage] = useState('');
   const [keyboardStatus, setKeyboardStatus] = useState(false);
   useEffect(() => {
@@ -70,82 +71,71 @@ const ServiceProviderDetail = ({ route }) => {
   }, []);
 
   const validateForm = () => {
-    if (!businessName) return 'Business Name field can’t be empty';
-    if (!message) return 'Description field can’t be empty';
-    if (!service) return 'Category field can’t be empty';
-    // if (!address) return 'Address field can’t be empty';
-    if (!profileImage) return 'Please add a liscense';
+   
+    if (category === 'Educationist') {
+      if (!businessName) return 'Business Name field can’t be empty';
+      if (!message) return 'Description field can’t be empty';
+      if (!educationType) return 'Education Type field can’t be empty';
+      if (!educationClassesType) return 'Education Classes field can’t be empty';
+      if (!educationInstituteType) return 'Education Institute Type field can’t be empty';
+    }
+    if (category === 'Healthcare') {
+      if (!hospitalName) return 'Hospital Name field can’t be empty';
+      if (!hospitalAddress) return 'Hospital Address field can’t be empty';
+      if (!hospitalType) return 'Hospital Type field can’t be empty';
+    }
     return null;
   };
-
 
   const onSubmit = async () => {
     const validationError = validateForm();
     if (validationError) {
-      Toast.show({
-        text1: validationError,
-        type: 'error',
-        visibilityTime: 3000,
-      });
+      Toast.show({ text1: validationError, type: 'error', visibilityTime: 3000 });
       return;
     }
 
-    const formData = new FormData();
-    formData.append('businessName', businessName);
-    formData.append('description', message);
-    formData.append('category', service);
-    formData.append('businessAdress', 'New York City');
+    const payload = category === 'Educationist' ? {
+      businessName,
+      educationType,
+      educationInstituteType,
+      educationClassesType,
+      description: message,
+    } : {
+      hospitalName,
+      hospitalAddress,
+      hospitalType
+    };
 
-    if (profileImage) {
-      formData.append('bussinessLiscense', {
-        uri: profileImage?.path,
-        name: `Profile${Date.now()}.${profileImage?.mime?.split('/').pop()}`,
-        type: profileImage?.mime,
-      });
-    }
+    const endpoint = category === 'Educationist'
+      ? 'educationist/complete-profile'
+      : 'health-care/complete-business-details';
+
     try {
       dispatch(loaderStart());
-      const response = await axios.post(`${BASE_URL}service-provider/bussiness`, formData, {
+      const response = await axios.post(`${BASE_URL}${endpoint}`, payload, {
         headers: {
-          'Content-Type': 'multipart/form-data',
+          'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
       });
-      console.log('Response:', response.data);
-      if (response) {
-        dispatch(loaderStop());
-        dispatch(loginUser(response.payload?.data));
-        Toast.show({
-          text1: response?.payload?.message,
-          type: 'success',
-          visibilityTime: 3000,
-        });
-      } else {
-        throw new Error('No data returned from API');
-      }
+      dispatch(loaderStop());
+      console.log('response?.data?.data',response?.data?.data)
+      dispatch(loginUser(response?.data?.data?.user));
+      dispatch(addType(category));
+      Toast.show({ text1: response?.data?.message, type: 'success', visibilityTime: 3000 });
     } catch (error) {
-      console.error('Error uploading form data:', error?.response || error);  // Better error logging
-      dispatch(loaderStop());  // Stop loader even on failure
-      Toast.show({
-        text1: 'Error uploading data. Please try again.',
-        type: 'error',
-        visibilityTime: 3000,
-      });
+      console.error('Error uploading form data:', error?.response?.data?.message || error);
+      dispatch(loaderStop());
     }
   };
 
-  const updateImageInGallery = (path, mime, type) => {
-    setProfileImage({ path, mime, type });
-  };
 
-  const lienceImageInGallery = (path, mime, type) => {
-    setLienceImage({ path, mime, type });
-  };
 
-  const saveAddress = (address) => {
-
+  const saveAddress = (address, geometry) => {
     console.log('addressaddress', address)
-    setAddress(address);
+    // setLat(geometry.location.lat)
+    // setLong(geometry.location.lng)
+    setHospitalAddress(address);
   };
 
   const saveCountry = (city, country) => {
@@ -157,86 +147,159 @@ const ServiceProviderDetail = ({ route }) => {
 
   return (
     <CustomBackground showLogo={false} titleText={'Business Details'}>
-      <View style={{ marginHorizontal: 6 }}>
-        <View style={{ alignItems: 'center', alignSelf: 'center' }}>
-          <ImagePicker
-            onImageChange={(path, mime, type) =>
-              updateImageInGallery(path, mime, type)
-            }>
-            <ProfileImage
-              name="UserName"
-              innerAsset={profileImage == null}
-              imageUri={
-                profileImage ? profileImage?.path : appIcons.userPlaceholder
-              }
+      <View style={{ marginHorizontal: 4,marginTop: 20, }}>
+          {category == "Educationist" && <View>
+            <Text style={styles.title}>Business Name</Text>
+            <CustomTextInput
+              placeholder="First Name"
+              value={businessName}
+              onChangeText={setBusinessName}
+              containerStyle={styles.containerStyle}
             />
-            <Image source={appIcons.camera} style={styles.uploadStyle} />
-          </ImagePicker>
-        </View>
-        <View style={{ marginTop: 20 }}>
-          <Text style={styles.title}>Business Name</Text>
-          <CustomTextInput
-            placeholder="First Name"
-            value={businessName}
-            onChangeText={setBusinessName}
-            containerStyle={styles.containerStyle}
-          />
-          <Text style={styles.title}>Address</Text>
-          <GooglePlaceAutocomplete
-            placeholder={'Address'}
-            callback={saveAddress}
-            rightIcon={true}
-            cityCountry={saveCountry}
-          />
-          <>
-            <Text style={[styles.title, { paddingTop: 10 }]}>
-              Business Category
-            </Text>
-            <TouchableOpacity
-              activeOpacity={0}
-              style={styles.inputstyle}
-              onPress={() => actionSheetServiceRef.current.show()}>
-              <Text style={styles.dateOfbirth}>
-                {service || 'Select Bussiness'}
+            <>
+              <Text style={[styles.title, { paddingTop: 10 }]}>
+                Education Type
               </Text>
-              <Image
-                style={{
-                  width: 15,
-                  height: 15,
-                  resizeMode: 'contain',
-                  tintColor: colors.secondary,
-                }}
-                source={appIcons.arrowDown}
-              />
-            </TouchableOpacity>
-            <Text style={styles.title}>Service Decription</Text>
-            <TextInput
-              maxLength={275}
-              style={[styles.Input, { height: 250, paddingTop: 15 }]}
-              textAlignVertical="top"
-              multiline
-              editable
-              blurOnSubmit={true}
-              placeholder={'Decription'}
-              placeholderTextColor={'#D3D3D3'} // Replace with colors.lightGray1 if you have it defined elsewhere
-              value={message}
-              onChangeText={value => setMessage(value)}
-            />
-            <ActionSheetComponent
-              ref={actionSheetServiceRef}
-              title="Select Service"
-              dataset={['EDUCATIONIST', 'HEALTHCARE', 'ADVOCASY', 'REALESTATE', 'SHOWROOM', 'SALON', 'HOSTEL', 'GYM']}
-              onPress={setService}
-            />
-          </>
+              <TouchableOpacity
+                activeOpacity={0}
+                style={styles.inputstyle}
+                onPress={() => actionSheetServiceRef.current.show()}>
+                <Text style={styles.dateOfbirth}>
+                  {educationType || 'Select Education Type'}
+                </Text>
+                <Image
+                  style={{
+                    width: 15,
+                    height: 15,
+                    resizeMode: 'contain',
+                    tintColor: colors.primary,
+                  }}
+                  source={appIcons.arrowDown}
+                />
+              </TouchableOpacity>
+              <Text style={[styles.title, { paddingTop: 10 }]}>
+                Education Institute Type
+              </Text>
+              <TouchableOpacity
+                activeOpacity={0}
+                style={styles.inputstyle}
+                onPress={() => educationInstituteTypeRef.current.show()}>
+                <Text style={styles.dateOfbirth}>
+                  {educationInstituteType || 'Select Education Institute Type'}
+                </Text>
+                <Image
+                  style={{
+                    width: 15,
+                    height: 15,
+                    resizeMode: 'contain',
+                    tintColor: colors.primary,
+                  }}
+                  source={appIcons.arrowDown}
+                />
+              </TouchableOpacity>
 
+              <Text style={[styles.title, { paddingTop: 10 }]}>
+                Education Classes Type
+              </Text>
+              <TouchableOpacity
+                activeOpacity={0}
+                style={styles.inputstyle}
+                onPress={() => educationClassesTypeRef.current.show()}>
+                <Text style={styles.dateOfbirth}>
+                  {educationClassesType || 'Select Education Classes Type'}
+                </Text>
+                <Image
+                  style={{
+                    width: 15,
+                    height: 15,
+                    resizeMode: 'contain',
+                    tintColor: colors.primary,
+                  }}
+                  source={appIcons.arrowDown}
+                />
+              </TouchableOpacity>
+              <Text style={styles.title}>Service Decription</Text>
+              <TextInput
+                maxLength={275}
+                style={[styles.Input, { height: 250, paddingTop: 15 }]}
+                textAlignVertical="top"
+                multiline
+                editable
+                blurOnSubmit={true}
+                placeholder={'Decription'}
+                placeholderTextColor={'#D3D3D3'} // Replace with colors.lightGray1 if you have it defined elsewhere
+                value={message}
+                onChangeText={value => setMessage(value)}
+              />
+              <ActionSheetComponent
+                ref={actionSheetServiceRef}
+                title="Select Service"
+                dataset={['School', 'College', 'Tution']}
+                onPress={setEducationType}
+              />
+              <ActionSheetComponent
+                ref={educationInstituteTypeRef}
+                title="Select Service"
+                dataset={['Government', 'Private', 'NGO']}
+                onPress={setEducationInstituteType}
+              />
+              <ActionSheetComponent
+                ref={educationClassesTypeRef}
+                title="Select Service"
+                dataset={['Primary', 'Secondary', 'Both']}
+                onPress={setEducationClassesType}
+              />
+            </>
+          </View>}
+         
+       {category == "Healthcare"&&   <View>
+            <Text style={styles.title}>Hospital Name</Text>
+            <CustomTextInput
+              placeholder="Hospital Name"
+              value={hospitalName}
+              onChangeText={setHospitalName}
+              containerStyle={styles.containerStyle}
+            />
+            <Text style={styles.title}>Address</Text>
+            <GooglePlaceAutocomplete
+              placeholder={'Address'}
+              callback={saveAddress}
+              rightIcon={true}
+              cityCountry={saveCountry}
+            />
+                        <Text style={[styles.title, { paddingTop: 10 }]}>
+                        Hospital Type
+              </Text>
+              <TouchableOpacity
+                activeOpacity={0}
+                style={styles.inputstyle}
+                onPress={() => actionHospitalTypeRef.current.show()}>
+                <Text style={styles.dateOfbirth}>
+                  {hospitalType || 'Select Hospital Type'}
+                </Text>
+                <Image
+                  style={{
+                    width: 15,
+                    height: 15,
+                    resizeMode: 'contain',
+                    tintColor: colors.primary,
+                  }}
+                  source={appIcons.arrowDown}
+                />
+              </TouchableOpacity>
+              <ActionSheetComponent
+                ref={actionHospitalTypeRef}
+                title="Select Service"
+                dataset={['Government', 'Private', 'NGO']}
+                onPress={setHospitalType}
+              />
+          </View>}
           <CustomButton
             buttonStyle={styles.buttonStyle}
             title="Submit"
             onPress={onSubmit}
           />
         </View>
-      </View>
     </CustomBackground>
   );
 };

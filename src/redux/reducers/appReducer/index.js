@@ -11,6 +11,7 @@ const INITIAL_STATE = {
   indexOfCurrentVisibleView: 0,
   refOfCurrentVisible: null,
   events: [],
+  categoryType:""
 };
 
 export default (states = INITIAL_STATE, action) => {
@@ -25,6 +26,11 @@ export default (states = INITIAL_STATE, action) => {
         ...states,
         loader: false,
       };
+      case 'ADD_TYPE':
+        return {
+          ...states,
+          categoryType: action.payload,
+        };
     case ALL_EVENT:
       return {
         ...states,

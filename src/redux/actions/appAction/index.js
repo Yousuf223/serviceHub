@@ -26,6 +26,12 @@ export function loaderStop() {
     type: 'LOADER_STOP',
   };
 }
+export function addType(payload) {
+  return {
+    type: 'ADD_TYPE',
+    payload
+  };
+}
 export function saveCurrentUserLocation(location) {
   return {
     type: 'SAVE_CURRENT_USER_LOCATION',

@@ -50,7 +50,7 @@ class ForgotPassword extends Component {
         titleText={'Forgot Password'}
         onBack={() => this.props.navigation.goBack()}>
         <View style={styles.container}>
-          <View style={[styles.container, { marginTop: 20 }]}>
+          <View style={[styles.container, {marginTop: "10%"}]}>
             <View style={styles.logoStyle}>
               <Image style={styles.applogo} source={appLogos.appLogo} />
             </View>
