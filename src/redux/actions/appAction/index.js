@@ -62,10 +62,12 @@ export function getEventList(responseCallback) {
     responseCallback,
   };
 }
-export function getAddList(responseCallback) {
+export function getAddList(params,responseCallback) {
   return {
     type: ActionTypes.GET_ADD_LIST.REQUEST,
-    responseCallback,
+    params,
+    responseCallback
+
   };
 }
 export function getAllLevels(params, responseCallback) {

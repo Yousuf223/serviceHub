@@ -108,7 +108,8 @@ const HealthCard = ({ }) => {
             Toast.show({ text1: response?.data?.message, type: 'success', visibilityTime: 3000 });
             dispatch(loaderStop());
             NavService.navigate('BottomTabs', { name: 'Home' });
-        }).catch(() => {
+        }).catch((error) => {
+            console.log('AHJHagdas',error)
             dispatch(loaderStop());
             Toast.show({ text1: 'Failed to create post. Try again.', type: 'error', visibilityTime: 3000 });
         });

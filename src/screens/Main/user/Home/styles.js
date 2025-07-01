@@ -40,5 +40,26 @@ const styles = StyleSheet.create({
     color: colors.black,
     fontWeight: '500'
   },
+  inputstyle: {
+    width: width * 0.86,
+    flexDirection: 'row',
+    alignItems: 'center',
+    borderRadius: 6,
+    paddingHorizontal: 15,
+    paddingVertical: 2,
+    height: 55,
+    borderWidth: 1,
+    borderColor: colors.black,
+    marginTop: 15,
+    justifyContent: 'space-between',
+    marginBottom: 7,
+    alignSelf:'center'
+    // backgroundColor:"red"
+  },
+  dateOfbirth: {
+    color: colors.black,
+    fontSize: size.tiny,
+    fontWeight: '300',
+  },
 });
 export default styles;

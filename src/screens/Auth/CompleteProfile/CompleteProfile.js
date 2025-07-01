@@ -98,10 +98,13 @@ const CompleteProfile = ({ route }) => {
     formData.append('lastName', lastName);
     formData.append('gender', gender == 'Male' ? 'male' : 'female');
     formData.append('contactNumber', phoneNumber);
-    if(role=="SERVICEPROVIDER"){
-     formData.append('category', service);
-    }
 
+    if(role=="SERVICEPROVIDER"){
+      formData.append('category', service);
+    }
+    else{
+      formData.append('category', 'abc');
+    }
     if (profileImage) {
       formData.append('userProfilePicture', {
         uri: profileImage?.path,
@@ -121,7 +124,7 @@ const CompleteProfile = ({ route }) => {
       });
       if (response) {
         console.log('sadsada', response?.data)
-        if (role === 'USER') {
+        if (!role === 'SERVICEPROVIDER') {
           //   NavService.navigate('Login',{
           //     role: role
           // })

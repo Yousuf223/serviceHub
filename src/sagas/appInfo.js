@@ -70,15 +70,14 @@ function* getAddList() {
     try {
       const response = yield call(
         callRequest,
-        GET_ADD_LIST,
-        null,
+        GET_ADD_LIST, 
         '',
+        params,
         {},
         ApiSauce,
       );
       yield put(loaderStop());
       if (response) {
-        console.log('----responseresponse', response?.data);
         if (responseCallback) {
           responseCallback(response?.data);
         }
@@ -87,12 +86,11 @@ function* getAddList() {
       }
     } catch (error) {
       responseCallback([]);
-      console.log('errorofgetpostlist', error);
-      // Util.DialogAlert(error?.message);
       yield put(loaderStop());
     }
   }
 }
+
 function* getNotification() {
   while (true) {
     const { params, responseCallback } = yield take(

@@ -10,20 +10,25 @@ import {
 import Img from './Img';
 import { colors } from '../utils';
 import moment from 'moment';
+import NavService from './NavService';
 
 const { width } = Dimensions.get('screen');
 
 const Card = ({ onPress, item, userName, userImage, cardStyle }) => {
-  console.log('item?.typeitem?.type',item?.education)
+  console.log('item?.typeitem?.type',item?.category)
   return (
-    <View style={[styles.card, cardStyle]}>
-      <TouchableOpacity onPress={onPress} style={styles.headerContainer}>
+    <TouchableOpacity activeOpacity={0.8} onPress={onPress} style={[styles.card, cardStyle]}>
+      <View  style={styles.headerContainer}>
         <Img local={true} style={styles.userImg} src={userImage} />
         <Text style={styles.userName}>{userName}</Text>
-      </TouchableOpacity>
+      </View>
       <Img local={true} style={styles.post} src={{ uri: item?.media[0]?.mediaUrl }} />
       <View style={styles.contentContainer}>
         <Text style={styles.category}>{item?.category}</Text>
+        {item?.category == 'RealEstate' && <View>
+          <Text style={styles.detailText}>{item?.realEstate?.title}</Text>
+          <Text style={styles.detailText}>{item?.realEstate?.description}</Text>
+          </View>}
         {item?.type === 'DOCTOR_APPOINTMENT' && (
           <View style={styles.detailsContainer}>
             <Text style={styles.detailText}>Doctor: {item?.healthcare?.doctorAppointment?.doctorName}</Text>
@@ -56,7 +61,7 @@ const Card = ({ onPress, item, userName, userImage, cardStyle }) => {
             <Text style={styles.detailText}>Date: {moment(item?.education?.admissionOpen?.admissionDate).format("MMM-DD-YYYY")}</Text>
             </View>}
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
 

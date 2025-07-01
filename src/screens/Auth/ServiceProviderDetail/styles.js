@@ -140,8 +140,9 @@ const styles = StyleSheet.create({
   buttonStyle: {
     borderRadius: 10,
     alignSelf: 'center',
-    width: '100%',
-    marginTop:20
+    width: '92%',
+    marginTop:20,
+    marginBottom:16
   },
   bottomView: {
     position: 'absolute',
@@ -182,6 +183,47 @@ const styles = StyleSheet.create({
     borderColor: colors.black,
     fontSize: size.tiny,
     width:'100%',alignSelf:"center"
+},
+containerStyle1:{
+  width:'90%',
+  alignSelf:'center'
+},
+facilitiesContainer: {
+  flexDirection: 'row',
+  flexWrap: 'wrap',
+  marginTop: 8,
+  justifyContent: 'flex-start',
+ marginHorizontal:20
+},
+facilityItem: {
+  paddingVertical: 12,
+  paddingHorizontal: 16,
+  borderRadius: 20,
+  borderWidth: 1,
+  borderColor: '#E0E0E0',
+  backgroundColor: '#FAFAFA',
+  marginRight: 8,
+  marginBottom: 8,
+  flexDirection: 'row',
+  alignItems: 'center'
+},
+selectedFacilityItem: {
+  backgroundColor: '#E6F0FF',
+  borderColor: colors.primary,
+},
+facilityText: {
+  color: colors.black,
+  fontSize: 14,
+},
+selectedFacilityText: {
+  color: colors.primary,
+  fontWeight: '500',
+},
+checkIcon: {
+  width: 16,
+  height: 16,
+  marginLeft: 8,
+  tintColor: colors.primary
 },
 containerStyle:{
   width:'100%'

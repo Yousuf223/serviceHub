@@ -3,7 +3,7 @@ import ApiSauce from '../services/ApiSauce';
 import store from '../redux';
 
 // export const BASE_URL = 'https://server.appsstaging.com:3017/api/v1/';
-export const BASE_URL = 'https://sn6jm18m-5000.inc1.devtunnels.ms/api/v1/';
+export const BASE_URL = 'https://cjb8lkts-5000.euw.devtunnels.ms/api/v1/';
 export const ASSETS_URL = 'https://host2.appsstaging.com/3332/lift_fitness/';
 export const WEB_SOCKET_URL = 'https://host2.appsstaging.com:3018/';
 export const GOOGLE_MAPS_URL =
@@ -369,7 +369,7 @@ export const callRequest = function (
         : urlParameter && !_.isEmpty(urlParameter)
           ? `${url.route}/${urlParameter}`
           : url.route;
-  console.log('_url', url);
+  console.log('oooourl', parameter);
   console.log('_url', _url);
   if (url.type === REQUEST_TYPE.POST) {
     return ApiSauce.post(_url, data, _header, baseUrl);

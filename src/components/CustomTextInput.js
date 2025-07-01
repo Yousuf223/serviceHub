@@ -111,6 +111,7 @@ export default function CustomTextInput(props) {
             }, inputStyle]}
             secureTextEntry={hidden}
             autoCapitalize="none"
+           
             {...props}
           />
           {props?.rightIcon && (

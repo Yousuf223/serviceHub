@@ -39,13 +39,15 @@ const Profile = () => {
             marginHorizontal={false}>
             <Image style={styles.userImage} source={userData?.profilePicture ? { uri: userData?.profilePicture } : appIcons.userPlaceholder}  />
             <View style={{
-                flexDirection: 'row', justifyContent: 'space-around',
-                alignItems: "center", width: '100%',
-                marginBottom: 26
+                // flexDirection: 'row', justifyContent: 'space-around',
+                // alignItems: "center",
+                 width: '100%',
+                marginBottom: 26,
+                marginHorizontal:20
             }}>
-                <TouchableOpacity style={styles.btn}>
+                {/* <TouchableOpacity style={styles.btn}>
                     <Text style={styles.btnText}>Edit Business</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
                 <TouchableOpacity style={styles.btn}>
                     <Text style={styles.btnText}>Edit Profile</Text>
                 </TouchableOpacity>

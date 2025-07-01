@@ -15,7 +15,7 @@ import {colors} from '../../../utils';
 import {appIcons, appLogos} from '../../../assets/index';
 import {loginCurrentUser, setRole} from '../../../redux/actions/authAction';
 import styles from './styles';
-import {getDeviceToken} from '../../../redux/actions/appAction';
+import {getDeviceToken, loaderStop} from '../../../redux/actions/appAction';
 
 class RoleSelection extends Component {
   state = {
@@ -23,6 +23,7 @@ class RoleSelection extends Component {
     password: '',
   };
   componentDidMount() {
+    this.props.loaderStop()
     // getToken = async () => {
     //   const fcmToken = await getDeviceToken();
     //   console.log('fcmTokenfcmToken',fcmToken)

@@ -31,6 +31,7 @@ function* login() {
   while (true) {
     const { payload } = yield take(ActionTypes.LOGIN_USER.REQUEST);
     yield put(loaderStart());
+
     try {
       const response = yield call(
         callRequest,
@@ -38,36 +39,48 @@ function* login() {
         payload,
         '',
         {},
-        ApiSauce,
+        ApiSauce
       );
+
       yield put(loaderStop());
+
       if (response) {
-        console.log('login user', response?.data);
-        if (response) {
-          if (response?.data?.user.isProfileCompleted == false) {
-            yield put(saveTokenForLoginUser(response?.token));
-            NavService.navigate('CompleteProfile', { role: payload?.role });
-            Util.DialogAlert(response.message, 'success');
-          }
-          else if (payload?.role !== 'USER' && response?.data?.user?.isBussinessDetailsCompleted == false) {
-            NavService.navigate('ServiceProviderDetail');
-            yield put(saveTokenForLoginUser(response?.token));
-          }
-          else {
-            yield put(saveTokenForLoginUser(response?.token));
-            yield put(loginUser(response?.data?.user));
-            yield put(addType(response?.data?.category))
-            Util.DialogAlert('Login Successfully', 'success');
-          }
+        const user = response?.data?.user;
+        const token = response?.token;
+        const category = response?.data?.category;
+        const normalizedRole = (payload?.role || '').toLowerCase();
+
+        console.log('login user', user);
+
+        // If profile is not completed
+        if (!user?.isProfileCompleted) {
+          yield put(saveTokenForLoginUser(token));
+          NavService.navigate('CompleteProfile', { role: payload?.role });
+          Util.DialogAlert(response.message, 'success');
+        }
+
+        // If it's not a regular user AND business details are not completed
+        else if (normalizedRole !== 'user' && !user?.isBussinessDetailsCompleted) {
+          yield put(saveTokenForLoginUser(token));
+          NavService.navigate('ServiceProviderDetail');
+        }
+
+        // All conditions satisfied — proceed to login
+        else {
+          yield put(saveTokenForLoginUser(token));
+          yield put(loginUser(user));
+          yield put(addType(category));
+          Util.DialogAlert('Login Successfully', 'success');
         }
       }
     } catch (error) {
-      console.log('-----errorerror----', error);
+      console.log('-----login error----', error);
       yield put(loaderStop());
       Util.DialogAlert(error.message);
     }
   }
 }
+
 function* signUp() {
   while (true) {
     const { payload } = yield take(ActionTypes.SIGNUP_USER.REQUEST);

@@ -10,12 +10,9 @@ import {
 } from 'react-native';
 import { connect, useDispatch, useSelector } from 'react-redux';
 import Toast from 'react-native-toast-message';
-import PhoneInput from 'react-native-phone-number-input';
 import CustomBackground from '../../../components/CustomBackground';
 import CustomButton from '../../../components/CustomButton';
 import CustomTextInput from '../../../components/CustomTextInput';
-import ImagePicker from '../../../components/ImagePicker';
-import ProfileImage from '../../../components/ProfileImage';
 import { appIcons } from '../../../assets/index';
 import {
   completeProfile,
@@ -25,10 +22,7 @@ import {
 import ActionSheet from 'react-native-actionsheet';
 import styles from './styles';
 import { colors } from '../../../utils';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import moment from 'moment';
 import NavService from '../../../helpers/NavService';
-import { cities, states } from '../../../utils/dummyData';
 import ActionSheetComponent from '../../../components/ActionSheetComponent';
 import AppBackground from '../../../components/AppBackground';
 import GooglePlaceAutocomplete from '../../../components/GooglePlaceAutocomplete';
@@ -41,29 +35,62 @@ const ServiceProviderDetail = ({ route }) => {
   const educationClassesTypeRef = useRef();
   const actionSheetServiceRef = useRef();
   const actionHospitalTypeRef = useRef();
-  const dispatch = useDispatch()
-  const phoneInput = useRef();
-  const token = useSelector((state) => state.authReducer.userToken)
-  const category = route?.params?.data?.category
+  const dispatch = useDispatch();
+  const token = useSelector((state) => state.authReducer.userToken);
+  const category = route?.params?.data?.category;
+
   const [businessName, setBusinessName] = useState('');
-  const [lastName, setLastName] = useState('');
   const [educationType, setEducationType] = useState('');
   const [educationClassesType, setEducationClassesType] = useState('');
-  const [educationInstituteType, setEducationInstituteType] = useState("")
+  const [educationInstituteType, setEducationInstituteType] = useState('');
   const [hospitalName, setHospitalName] = useState('');
   const [hospitalAddress, setHospitalAddress] = useState('');
   const [hospitalType, setHospitalType] = useState('');
   const [message, setMessage] = useState('');
-  const [keyboardStatus, setKeyboardStatus] = useState(false);
+  const [gymName, setGymName] = useState('');
+  const [isTrainerAvailable, setIsTrainerAvailable] = useState(false);
+  const [gymFacilities, setGymFacilities] = useState([]);
+  const [servicesOffered, setServicesOffered] = useState([]);
+  const [serviceType, setServiceType] = useState([]);
+  const [realStateType, setRealStateType] = useState('');
+
+  const gymFacilitiesList = [
+    'Cardio Equipment',
+    'Strength Training Equipment',
+    'Personal Training',
+    'Group Fitness Classes',
+    'Sauna/Steam Room',
+    'Swimming Pool',
+    'Locker Rooms with Showers',
+    'Changing Rooms',
+    'Cafeteria/Health Bar',
+    'Parking Facility',
+    'Kids Play Area/Daycare',
+    'Indoor Sports Area',
+    'Spa and Massage Services',
+    '24/7 Access',
+    'Wi-Fi Access',
+  ];
+
+  const realFacilitiesList = [
+    "Buy",
+    "Sell",
+    "Rent",
+    "Lease",
+    "Property Management",
+    "Real Estate Consultancy",
+  ];
+
+  const propertyTypesDealt = [
+    "Residential",
+    "Commercial",
+    "Industrial",
+    "Land/Plots",
+    "Agricultural"
+  ];
   useEffect(() => {
-    const showSubscription = Keyboard.addListener('keyboardDidShow', () => {
-      setKeyboardStatus(true);
-    });
-
-    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => {
-      setKeyboardStatus(false);
-    });
-
+    const showSubscription = Keyboard.addListener('keyboardDidShow', () => { });
+    const hideSubscription = Keyboard.addListener('keyboardDidHide', () => { });
     return () => {
       showSubscription.remove();
       hideSubscription.remove();
@@ -71,7 +98,6 @@ const ServiceProviderDetail = ({ route }) => {
   }, []);
 
   const validateForm = () => {
-   
     if (category === 'Educationist') {
       if (!businessName) return 'Business Name field can’t be empty';
       if (!message) return 'Description field can’t be empty';
@@ -84,6 +110,16 @@ const ServiceProviderDetail = ({ route }) => {
       if (!hospitalAddress) return 'Hospital Address field can’t be empty';
       if (!hospitalType) return 'Hospital Type field can’t be empty';
     }
+    if (category === 'Gym') {
+      if (!gymName) return 'Gym Name field can’t be empty';
+      if (gymFacilities.length === 0) return 'Please select at least one Gym Facility';
+    }
+
+    if (category === 'RealEstate') {
+      if (!realStateType) return 'Real State Type field can’t be empty';
+      if (serviceType.length === 0) return 'Please select at least one Service Type';
+      if (servicesOffered.length === 0) return 'Please select at least one Services Offered';
+    }
     return null;
   };
 
@@ -93,33 +129,51 @@ const ServiceProviderDetail = ({ route }) => {
       Toast.show({ text1: validationError, type: 'error', visibilityTime: 3000 });
       return;
     }
-
-    const payload = category === 'Educationist' ? {
-      businessName,
-      educationType,
-      educationInstituteType,
-      educationClassesType,
-      description: message,
-    } : {
-      hospitalName,
-      hospitalAddress,
-      hospitalType
-    };
-
-    const endpoint = category === 'Educationist'
-      ? 'educationist/complete-profile'
-      : 'health-care/complete-business-details';
-
+  
+    let payload = {};
+    let endpoint = '';
+  
+    if (category === 'Educationist') {
+      payload = {
+        businessName,
+        educationType,
+        educationInstituteType,
+        educationClassesType,
+        description: message,
+      };
+      endpoint = 'educationist/complete-profile';
+    } else if (category === 'Healthcare') {
+      payload = {
+        hospitalName,
+        hospitalAddress,
+        hospitalType,
+      };
+      endpoint = 'health-care/complete-business-details';
+    } else if (category === 'Gym') {
+      payload = {
+        gymName,
+        isTrainerAvailable,
+        gymFacilities,
+      };
+      endpoint = 'gym/complete-business-details';
+    } else if (category === 'RealEstate') {
+      payload = {
+        ownerType: realStateType,
+        servicesOffered,
+        propertyTypesDealt: serviceType,
+      };
+      endpoint = 'real-estate/complete-business-details';
+    }
+  
     try {
       dispatch(loaderStart());
       const response = await axios.post(`${BASE_URL}${endpoint}`, payload, {
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       });
       dispatch(loaderStop());
-      console.log('response?.data?.data',response?.data?.data)
       dispatch(loginUser(response?.data?.data?.user));
       dispatch(addType(category));
       Toast.show({ text1: response?.data?.message, type: 'success', visibilityTime: 3000 });
@@ -128,131 +182,83 @@ const ServiceProviderDetail = ({ route }) => {
       dispatch(loaderStop());
     }
   };
-
-
+  
 
   const saveAddress = (address, geometry) => {
-    console.log('addressaddress', address)
-    // setLat(geometry.location.lat)
-    // setLong(geometry.location.lng)
     setHospitalAddress(address);
   };
 
-  const saveCountry = (city, country) => {
-    setCity(city);
-    setStateField(country);
-  };
-
-  const { email } = route?.params;
-
   return (
     <CustomBackground showLogo={false} titleText={'Business Details'}>
-      <View style={{ marginHorizontal: 4,marginTop: 20, }}>
-          {category == "Educationist" && <View>
+      <View style={{ marginHorizontal: 4, marginTop: 20 }}>
+        {category === 'Educationist' && (
+          <>
             <Text style={styles.title}>Business Name</Text>
             <CustomTextInput
-              placeholder="First Name"
+              placeholder="Business Name"
               value={businessName}
               onChangeText={setBusinessName}
               containerStyle={styles.containerStyle}
             />
-            <>
-              <Text style={[styles.title, { paddingTop: 10 }]}>
-                Education Type
+            <Text style={styles.title}>Education Type</Text>
+            <TouchableOpacity
+              style={styles.inputstyle}
+              onPress={() => actionSheetServiceRef.current.show()}>
+              <Text style={styles.dateOfbirth}>{educationType || 'Select Education Type'}</Text>
+              <Image source={appIcons.arrowDown} style={styles.arrowIcon} />
+            </TouchableOpacity>
+            <Text style={styles.title}>Education Institute Type</Text>
+            <TouchableOpacity
+              style={styles.inputstyle}
+              onPress={() => educationInstituteTypeRef.current.show()}>
+              <Text style={styles.dateOfbirth}>
+                {educationInstituteType || 'Select Institute Type'}
               </Text>
-              <TouchableOpacity
-                activeOpacity={0}
-                style={styles.inputstyle}
-                onPress={() => actionSheetServiceRef.current.show()}>
-                <Text style={styles.dateOfbirth}>
-                  {educationType || 'Select Education Type'}
-                </Text>
-                <Image
-                  style={{
-                    width: 15,
-                    height: 15,
-                    resizeMode: 'contain',
-                    tintColor: colors.primary,
-                  }}
-                  source={appIcons.arrowDown}
-                />
-              </TouchableOpacity>
-              <Text style={[styles.title, { paddingTop: 10 }]}>
-                Education Institute Type
+              <Image source={appIcons.arrowDown} style={styles.arrowIcon} />
+            </TouchableOpacity>
+            <Text style={styles.title}>Education Classes Type</Text>
+            <TouchableOpacity
+              style={styles.inputstyle}
+              onPress={() => educationClassesTypeRef.current.show()}>
+              <Text style={styles.dateOfbirth}>
+                {educationClassesType || 'Select Classes Type'}
               </Text>
-              <TouchableOpacity
-                activeOpacity={0}
-                style={styles.inputstyle}
-                onPress={() => educationInstituteTypeRef.current.show()}>
-                <Text style={styles.dateOfbirth}>
-                  {educationInstituteType || 'Select Education Institute Type'}
-                </Text>
-                <Image
-                  style={{
-                    width: 15,
-                    height: 15,
-                    resizeMode: 'contain',
-                    tintColor: colors.primary,
-                  }}
-                  source={appIcons.arrowDown}
-                />
-              </TouchableOpacity>
+              <Image source={appIcons.arrowDown} style={styles.arrowIcon} />
+            </TouchableOpacity>
+            <Text style={styles.title}>Service Description</Text>
+            <TextInput
+              maxLength={275}
+              style={[styles.Input, { height: 250, paddingTop: 15 }]}
+              textAlignVertical="top"
+              multiline
+              placeholder={'Description'}
+              placeholderTextColor={'#D3D3D3'}
+              value={message}
+              onChangeText={setMessage}
+            />
+            <ActionSheetComponent
+              ref={actionSheetServiceRef}
+              title="Select Service"
+              dataset={['School', 'College', 'Tuition']}
+              onPress={setEducationType}
+            />
+            <ActionSheetComponent
+              ref={educationInstituteTypeRef}
+              title="Select Institute Type"
+              dataset={['Government', 'Private', 'NGO']}
+              onPress={setEducationInstituteType}
+            />
+            <ActionSheetComponent
+              ref={educationClassesTypeRef}
+              title="Select Class Type"
+              dataset={['Primary', 'Secondary', 'Both']}
+              onPress={setEducationClassesType}
+            />
+          </>
+        )}
 
-              <Text style={[styles.title, { paddingTop: 10 }]}>
-                Education Classes Type
-              </Text>
-              <TouchableOpacity
-                activeOpacity={0}
-                style={styles.inputstyle}
-                onPress={() => educationClassesTypeRef.current.show()}>
-                <Text style={styles.dateOfbirth}>
-                  {educationClassesType || 'Select Education Classes Type'}
-                </Text>
-                <Image
-                  style={{
-                    width: 15,
-                    height: 15,
-                    resizeMode: 'contain',
-                    tintColor: colors.primary,
-                  }}
-                  source={appIcons.arrowDown}
-                />
-              </TouchableOpacity>
-              <Text style={styles.title}>Service Decription</Text>
-              <TextInput
-                maxLength={275}
-                style={[styles.Input, { height: 250, paddingTop: 15 }]}
-                textAlignVertical="top"
-                multiline
-                editable
-                blurOnSubmit={true}
-                placeholder={'Decription'}
-                placeholderTextColor={'#D3D3D3'} // Replace with colors.lightGray1 if you have it defined elsewhere
-                value={message}
-                onChangeText={value => setMessage(value)}
-              />
-              <ActionSheetComponent
-                ref={actionSheetServiceRef}
-                title="Select Service"
-                dataset={['School', 'College', 'Tution']}
-                onPress={setEducationType}
-              />
-              <ActionSheetComponent
-                ref={educationInstituteTypeRef}
-                title="Select Service"
-                dataset={['Government', 'Private', 'NGO']}
-                onPress={setEducationInstituteType}
-              />
-              <ActionSheetComponent
-                ref={educationClassesTypeRef}
-                title="Select Service"
-                dataset={['Primary', 'Secondary', 'Both']}
-                onPress={setEducationClassesType}
-              />
-            </>
-          </View>}
-         
-       {category == "Healthcare"&&   <View>
+        {category === 'Healthcare' && (
+          <>
             <Text style={styles.title}>Hospital Name</Text>
             <CustomTextInput
               placeholder="Hospital Name"
@@ -261,53 +267,163 @@ const ServiceProviderDetail = ({ route }) => {
               containerStyle={styles.containerStyle}
             />
             <Text style={styles.title}>Address</Text>
-            <GooglePlaceAutocomplete
-              placeholder={'Address'}
-              callback={saveAddress}
-              rightIcon={true}
-              cityCountry={saveCountry}
+            <GooglePlaceAutocomplete placeholder={'Address'} callback={saveAddress} />
+            <Text style={styles.title}>Hospital Type</Text>
+            <TouchableOpacity
+              style={styles.inputstyle}
+              onPress={() => actionHospitalTypeRef.current.show()}>
+              <Text style={styles.dateOfbirth}>{hospitalType || 'Select Hospital Type'}</Text>
+              <Image source={appIcons.arrowDown} style={styles.arrowIcon} />
+            </TouchableOpacity>
+            <ActionSheetComponent
+              ref={actionHospitalTypeRef}
+              title="Select Hospital Type"
+              dataset={['Government', 'Private', 'NGO']}
+              onPress={setHospitalType}
             />
-                        <Text style={[styles.title, { paddingTop: 10 }]}>
-                        Hospital Type
-              </Text>
-              <TouchableOpacity
-                activeOpacity={0}
-                style={styles.inputstyle}
-                onPress={() => actionHospitalTypeRef.current.show()}>
-                <Text style={styles.dateOfbirth}>
-                  {hospitalType || 'Select Hospital Type'}
-                </Text>
-                <Image
-                  style={{
-                    width: 15,
-                    height: 15,
-                    resizeMode: 'contain',
-                    tintColor: colors.primary,
-                  }}
-                  source={appIcons.arrowDown}
-                />
-              </TouchableOpacity>
-              <ActionSheetComponent
-                ref={actionHospitalTypeRef}
-                title="Select Service"
-                dataset={['Government', 'Private', 'NGO']}
-                onPress={setHospitalType}
-              />
-          </View>}
-          <CustomButton
-            buttonStyle={styles.buttonStyle}
-            title="Submit"
-            onPress={onSubmit}
+          </>
+        )}
+
+        {category === 'Gym' && (
+          <>
+            <Text style={styles.title}>Gym Name</Text>
+            <CustomTextInput
+              placeholder="Gym Name"
+              value={gymName}
+              onChangeText={setGymName}
+              containerStyle={styles.containerStyle1}
+            />
+            <Text style={styles.title}>Is Trainer Available?</Text>
+            <TouchableOpacity
+              onPress={() => setIsTrainerAvailable(!isTrainerAvailable)}
+              style={[styles.inputstyle, { flexDirection: 'row', justifyContent: 'space-between' }]}>
+              <Text>{isTrainerAvailable ? 'Yes' : 'No'}</Text>
+              <Image source={appIcons.arrowDown} style={styles.arrowIcon} />
+            </TouchableOpacity>
+
+            <Text style={[styles.title, { paddingTop: 10 }]}>Gym Facilities</Text>
+
+            <View style={styles.facilitiesContainer}>
+              {gymFacilitiesList.map((facility, index) => {
+                const isSelected = gymFacilities.includes(facility);
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={[
+                      styles.facilityItem,
+                      isSelected && styles.selectedFacilityItem
+                    ]}
+                    onPress={() =>
+                      isSelected
+                        ? setGymFacilities(prev => prev.filter(f => f !== facility))
+                        : setGymFacilities(prev => [...prev, facility])
+                    }>
+                    <Text style={[
+                      styles.facilityText,
+                      isSelected && styles.selectedFacilityText
+                    ]}>
+                      {facility}
+                    </Text>
+                    {isSelected && (
+                      <Image
+                        source={appIcons.checkmark}
+                        style={styles.checkIcon}
+                      />
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </>
+        )}
+        {category == 'RealEstate' && <View>
+          <Text style={styles.title}>Owner Type</Text>
+          <TouchableOpacity
+            style={styles.inputstyle}
+            onPress={() => actionHospitalTypeRef.current.show()}>
+            <Text style={styles.dateOfbirth}>{realStateType || 'Select Your Type'}</Text>
+            <Image source={appIcons.arrowDown} style={styles.arrowIcon} />
+          </TouchableOpacity>
+          <ActionSheetComponent
+            ref={actionHospitalTypeRef}
+            title="Select Your Type'"
+            dataset={['Owner', 'Broker', 'Builder']}
+            onPress={setRealStateType}
           />
-        </View>
+          <Text style={[styles.title, { paddingTop: 10 }]}>Services Offered</Text>
+          <View style={styles.facilitiesContainer}>
+            {realFacilitiesList.map((facility, index) => {
+              const isSelected = servicesOffered.includes(facility);
+              return (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.facilityItem,
+                    isSelected && styles.selectedFacilityItem
+                  ]}
+                  onPress={() =>
+                    isSelected
+                      ? setServicesOffered(prev => prev.filter(f => f !== facility))
+                      : setServicesOffered(prev => [...prev, facility])
+                  }>
+                  <Text style={[
+                    styles.facilityText,
+                    isSelected && styles.selectedFacilityText
+                  ]}>
+                    {facility}
+                  </Text>
+                  {isSelected && (
+                    <Image
+                      source={appIcons.checkmark}
+                      style={styles.checkIcon}
+                    />
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          <Text style={[styles.title, { paddingTop: 10 }]}>Property Types</Text>
+          <View style={styles.facilitiesContainer}>
+            {propertyTypesDealt.map((facility, index) => {
+              const isSelected = serviceType.includes(facility);
+              return (
+                <TouchableOpacity
+                  key={index}
+                  style={[
+                    styles.facilityItem,
+                    isSelected && styles.selectedFacilityItem
+                  ]}
+                  onPress={() =>
+                    isSelected
+                      ? setServiceType(prev => prev.filter(f => f !== facility))
+                      : setServiceType(prev => [...prev, facility])
+                  }>
+                  <Text style={[
+                    styles.facilityText,
+                    isSelected && styles.selectedFacilityText
+                  ]}>
+                    {facility}
+                  </Text>
+                  {isSelected && (
+                    <Image
+                      source={appIcons.checkmark}
+                      style={styles.checkIcon}
+                    />
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        </View>}
+
+        <CustomButton buttonStyle={styles.buttonStyle} title="Submit" onPress={onSubmit} />
+      </View>
     </CustomBackground>
   );
 };
 
-const mapStateToProps = state => ({
-  // token: state.auth.token,
-  // user: state.auth.user,
-});
+const mapStateToProps = state => ({});
 
 export default connect(mapStateToProps, {
   completeProfile,
