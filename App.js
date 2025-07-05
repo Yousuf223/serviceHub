@@ -22,13 +22,17 @@ import {
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {PersistGate} from 'redux-persist/integration/react';
 import Toast, {BaseToast, ErrorToast} from 'react-native-toast-message';
-import {Provider} from 'react-redux';
+import {Provider, useSelector} from 'react-redux';
 import store, {persistor} from './src/redux';
 import Loader from './src/helpers/Loader';
 import MainNavigation from './src/routes';
 import {colors} from './src/utils';
 import LinearGradient from 'react-native-linear-gradient';
 import { appImages } from './src/assets';
+import { WEB_SOCKET_URL } from './src/config/WebService';
+import { io } from 'socket.io-client';
+import { saveScoket } from './src/redux/actions/appAction';
+import AppWithSocket from './AppWithSocket';
 // ignore warnings
 LogBox.ignoreAllLogs();
 
@@ -67,50 +71,31 @@ const toastConfig = {
   ),
 };
 
-const App = () => {
-  // let socket = null;
-  // const saveCurrebtSocket = () => {
-  //   socket = io(WEB_SOCKET_URL);
-  //   socket.on('connect', () => {
-  //     if (socket.connected) {
-  //       console.log('socket', socket);
-  //       saveScoket(socket);
-  //     } else {
-  //       console.log('socket', socket);
-  //       saveScoket(null);
-  //     }
-  //   });
-  // };
-  // useEffect(() => {
-  //   saveCurrebtSocket();
-  //   return () => {
-  //     if (socket !== null) {
-  //       socket?.disconnect();
-  //     }
-  //   };
-  // }, []);
-  return (
-    <Wrapper>
-      <GestureHandlerRootView style={styles.container}>
-        <StatusBar
-          translucent={true}
-          backgroundColor={colors.white}
-          barStyle="dark-content"
 
-        />
-        <Provider store={store}>
-          <PersistGate persistor={persistor}>
+const App = () => {
+  return (
+    <Provider store={store}>
+      <PersistGate persistor={persistor}>
+        <Wrapper>
+          <GestureHandlerRootView style={styles.container}>
+            <StatusBar
+              translucent={true}
+              backgroundColor={colors.white}
+              barStyle="dark-content"
+            />
             <Loader />
-            <MainNavigation />
+            <AppWithSocket />
             <Toast config={toastConfig} />
-          </PersistGate>
-        </Provider>
-      </GestureHandlerRootView>
-    </Wrapper>
+          </GestureHandlerRootView>
+        </Wrapper>
+      </PersistGate>
+    </Provider>
   );
 };
 
 export default App;
+
+
 
 const Wrapper = ({children}) => {
   if (Platform.OS === 'ios')

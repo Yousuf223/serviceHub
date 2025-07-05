@@ -35,9 +35,20 @@ const ServiceProviderDetail = ({ route }) => {
   const educationClassesTypeRef = useRef();
   const actionSheetServiceRef = useRef();
   const actionHospitalTypeRef = useRef();
+  const genderTypeRef = useRef();
+
   const dispatch = useDispatch();
   const token = useSelector((state) => state.authReducer.userToken);
   const category = route?.params?.data?.category;
+  const [consultationFee, setConsultationFee] = useState('');
+  const [experienceYears, setExperienceYears] = useState('');
+  const [barCouncil, setBarCouncil] = useState('');
+  const [lawCategories, setLawCategories] = useState([]);
+  const [hostelName, setHostelName] = useState('');
+  const [totalRooms, setTotalRooms] = useState('');
+  const [genderType, setGenderType] = useState('');
+  const [roomTypes, setRoomTypes] = useState([]);
+  const [hostelServices, setHostelServices] = useState([]);
 
   const [businessName, setBusinessName] = useState('');
   const [educationType, setEducationType] = useState('');
@@ -120,6 +131,20 @@ const ServiceProviderDetail = ({ route }) => {
       if (serviceType.length === 0) return 'Please select at least one Service Type';
       if (servicesOffered.length === 0) return 'Please select at least one Services Offered';
     }
+    if (category === 'Advocasy') {
+      if (!consultationFee) return 'Consultation Fee field can’t be empty';
+      if (!experienceYears) return 'Experience Years field can’t be empty';
+      if (!barCouncil) return 'Bar Council field can’t be empty';
+      if (lawCategories.length === 0) return 'Please select at least one Law Category';
+    }
+    if (category === 'Hostel') {
+      if (!hostelName) return 'Hostel Name field can’t be empty';
+      if (!totalRooms) return 'Total Rooms field can’t be empty';
+      if (!genderType) return 'Gender Type must be selected';
+      if (roomTypes.length === 0) return 'Please select at least one Room Type';
+      if (hostelServices.length === 0) return 'Please select at least one Service';
+    }
+
     return null;
   };
 
@@ -129,10 +154,10 @@ const ServiceProviderDetail = ({ route }) => {
       Toast.show({ text1: validationError, type: 'error', visibilityTime: 3000 });
       return;
     }
-  
+
     let payload = {};
     let endpoint = '';
-  
+
     if (category === 'Educationist') {
       payload = {
         businessName,
@@ -164,7 +189,27 @@ const ServiceProviderDetail = ({ route }) => {
       };
       endpoint = 'real-estate/complete-business-details';
     }
-  
+    else if (category === 'Advocasy') {
+      payload = {
+        consultationFee: Number(consultationFee),
+        experienceYears: Number(experienceYears),
+        barCouncil,
+        categories: lawCategories,
+      };
+      endpoint = 'advocasy/complete-bussiness-details';
+    }
+    else if (category === 'Hostel') {
+      payload = {
+        hostelName,
+        totalRooms: Number(totalRooms),
+        genderType,
+        roomTypes,
+        services: hostelServices,
+      };
+      endpoint = 'hostel/complete-bussiness-details';
+    }
+
+
     try {
       dispatch(loaderStart());
       const response = await axios.post(`${BASE_URL}${endpoint}`, payload, {
@@ -182,7 +227,7 @@ const ServiceProviderDetail = ({ route }) => {
       dispatch(loaderStop());
     }
   };
-  
+
 
   const saveAddress = (address, geometry) => {
     setHospitalAddress(address);
@@ -416,6 +461,184 @@ const ServiceProviderDetail = ({ route }) => {
             })}
           </View>
         </View>}
+        {category === 'Advocasy' && (
+          <View>
+            <Text style={styles.title}>Consultation Fee</Text>
+            <CustomTextInput
+              placeholder="Consultation Fee"
+              value={consultationFee}
+              keyboardType="numeric"
+              onChangeText={setConsultationFee}
+              containerStyle={styles.containerStyle}
+            />
+
+            <Text style={styles.title}>Years of Experience</Text>
+            <CustomTextInput
+              placeholder="Experience Years"
+              value={experienceYears}
+              keyboardType="numeric"
+              onChangeText={setExperienceYears}
+              containerStyle={styles.containerStyle}
+            />
+
+            <Text style={styles.title}>Bar Council</Text>
+            <CustomTextInput
+              placeholder="Bar Council"
+              value={barCouncil}
+              onChangeText={setBarCouncil}
+              containerStyle={styles.containerStyle}
+            />
+
+            <Text style={[styles.title, { paddingTop: 10 }]}>Categories</Text>
+            <View style={styles.facilitiesContainer}>
+              {[
+                'Criminal Law',
+                'Family Law',
+                'Corporate Law',
+                'Civil Law',
+                'Tax Law',
+                'Immigration Law',
+                'Labour & Employment Law',
+                'Property & Real Estate',
+                'Constitutional Law',
+                'Intellectual Property Law',
+                'Consumer Protection Law',
+                'Banking & Finance Law',
+                'Cyber Law',
+                'Environmental Law',
+                'Insurance Law',
+                'Contract Law',
+                'Human Rights Law',
+                'Education Law',
+                'Medical Malpractice',
+              ].map((law, index) => {
+                const isSelected = lawCategories.includes(law);
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={[
+                      styles.facilityItem,
+                      isSelected && styles.selectedFacilityItem
+                    ]}
+                    onPress={() =>
+                      isSelected
+                        ? setLawCategories(prev => prev.filter(l => l !== law))
+                        : setLawCategories(prev => [...prev, law])
+                    }>
+                    <Text
+                      style={[
+                        styles.facilityText,
+                        isSelected && styles.selectedFacilityText
+                      ]}>
+                      {law}
+                    </Text>
+                    {isSelected && (
+                      <Image source={appIcons.checkmark} style={styles.checkIcon} />
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+          </View>
+        )}
+        {category === 'Hostel' && (
+          <View>
+            <Text style={styles.title}>Hostel Name</Text>
+            <CustomTextInput
+              placeholder="Hostel Name"
+              value={hostelName}
+              onChangeText={setHostelName}
+              containerStyle={[styles.containerStyle, { width: '90%' }]}
+            />
+
+            <Text style={styles.title}>Total Rooms</Text>
+            <CustomTextInput
+              placeholder="Total Rooms"
+              value={totalRooms}
+              keyboardType="numeric"
+              onChangeText={setTotalRooms}
+              containerStyle={[styles.containerStyle, { width: '90%' }]}
+            />
+
+            <Text style={styles.title}>Gender Type</Text>
+            <TouchableOpacity
+              style={styles.inputstyle}
+              onPress={() => genderTypeRef.current.show()}>
+              <Text style={styles.dateOfbirth}>{genderType || 'Select Gender Type'}</Text>
+              <Image source={appIcons.arrowDown} style={styles.arrowIcon} />
+            </TouchableOpacity>
+            <ActionSheetComponent
+              ref={genderTypeRef}
+              title="Select Gender"
+              dataset={['Male', 'Female', 'Coed']}
+              onPress={setGenderType}
+            />
+
+            <Text style={[styles.title, { paddingTop: 10 }]}>Room Types</Text>
+            <View style={styles.facilitiesContainer}>
+              {['Single', 'Double', 'Shared'].map((type, index) => {
+                const isSelected = roomTypes.includes(type);
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={[
+                      styles.facilityItem,
+                      isSelected && styles.selectedFacilityItem,
+                    ]}
+                    onPress={() =>
+                      isSelected
+                        ? setRoomTypes(prev => prev.filter(item => item !== type))
+                        : setRoomTypes(prev => [...prev, type])
+                    }>
+                    <Text
+                      style={[
+                        styles.facilityText,
+                        isSelected && styles.selectedFacilityText,
+                      ]}>
+                      {type}
+                    </Text>
+                    {isSelected && (
+                      <Image source={appIcons.checkmark} style={styles.checkIcon} />
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+
+
+            <Text style={[styles.title, { paddingTop: 10 }]}>Services</Text>
+            <View style={styles.facilitiesContainer}>
+              {['WiFi', 'Mess', 'Laundary', 'Security', 'Parking'].map((service, index) => {
+                const isSelected = hostelServices.includes(service);
+                return (
+                  <TouchableOpacity
+                    key={index}
+                    style={[
+                      styles.facilityItem,
+                      isSelected && styles.selectedFacilityItem,
+                    ]}
+                    onPress={() =>
+                      isSelected
+                        ? setHostelServices(prev => prev.filter(item => item !== service))
+                        : setHostelServices(prev => [...prev, service])
+                    }>
+                    <Text
+                      style={[
+                        styles.facilityText,
+                        isSelected && styles.selectedFacilityText,
+                      ]}>
+                      {service}
+                    </Text>
+                    {isSelected && (
+                      <Image source={appIcons.checkmark} style={styles.checkIcon} />
+                    )}
+                  </TouchableOpacity>
+                );
+              })}
+            </View>
+
+          </View>
+        )}
 
         <CustomButton buttonStyle={styles.buttonStyle} title="Submit" onPress={onSubmit} />
       </View>

@@ -3,9 +3,9 @@ import ApiSauce from '../services/ApiSauce';
 import store from '../redux';
 
 // export const BASE_URL = 'https://server.appsstaging.com:3017/api/v1/';
-export const BASE_URL = 'https://cjb8lkts-5000.euw.devtunnels.ms/api/v1/';
+export const BASE_URL = 'https://sn6jm18m-5000.inc1.devtunnels.ms/api/v1/';
 export const ASSETS_URL = 'https://host2.appsstaging.com/3332/lift_fitness/';
-export const WEB_SOCKET_URL = 'https://host2.appsstaging.com:3018/';
+export const WEB_SOCKET_URL = 'https://sn6jm18m-5000.inc1.devtunnels.ms/';
 export const GOOGLE_MAPS_URL =
   'https://www.google.com/maps/search/?api=1&query=';
 // export const BASE_URL = "http://10.0.4.71:3018/api/v1/"; //local
@@ -130,6 +130,11 @@ export const GET_ADD_LIST = {
   access_token_required: true,
   type: REQUEST_TYPE.GET,
 };
+export const GET_MESSAGES = {
+  route: 'chat/room-messages',
+  access_token_required: true,
+  type: REQUEST_TYPE.GET,
+};
 export const GET_ALL_LEVELS = {
   route: 'levels',
   access_token_required: true,
@@ -165,8 +170,8 @@ export const TOGGLE_NOTIFICATION = {
   access_token_required: true,
   type: REQUEST_TYPE.PATCH,
 };
-export const GET_PROFILE = {
-  route: 'users/me',
+export const GET_PROFILE_DETAIL = {
+  route: 'user/public-feed/view-service-provider-profile',
   access_token_required: true,
   type: REQUEST_TYPE.GET,
 };

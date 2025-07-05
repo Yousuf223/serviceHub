@@ -10,6 +10,7 @@ import Chat from '../../screens/Main/user/Chat';
 import Settings from '../../screens/Main/user/Settings';
 import ChangePassword from '../../screens/Main/user/ChangePassword';
 import BusinessDetail from '../../screens/Main/user/BusinessDetail/BusinessDetail,';
+import ProfileDetail from '../../screens/Main/user/ProfileDetail';
 
 const Stack = createNativeStackNavigator();
 
@@ -33,7 +34,8 @@ const UserNavigation = ({ initialRoute }) => {
       <Stack.Screen name="Settings" component={Settings} />
       <Stack.Screen name="ChangePassword" component={ChangePassword} />
       <Stack.Screen name="BusinessDetail" component={BusinessDetail} />
-      
+      <Stack.Screen name="ProfileDetail" component={ProfileDetail} />
+
     </Stack.Navigator>
   );
 };

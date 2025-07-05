@@ -14,15 +14,19 @@ import NavService from './NavService';
 
 const { width } = Dimensions.get('screen');
 
-const Card = ({ onPress, item, userName, userImage, cardStyle }) => {
-  console.log('item?.typeitem?.type',item?.category)
+const Card = ({ onPress, item, userName, userImage,onProfile, cardStyle }) => {
+  console.log('item?.typeitem?.type',item?.type)
   return (
-    <TouchableOpacity activeOpacity={0.8} onPress={onPress} style={[styles.card, cardStyle]}>
-      <View  style={styles.headerContainer}>
+    <TouchableOpacity activeOpacity={0.8} onPress={onProfile} style={[styles.card, cardStyle]}>
+      {userImage &&       <View  style={styles.headerContainer}>
         <Img local={true} style={styles.userImg} src={userImage} />
         <Text style={styles.userName}>{userName}</Text>
-      </View>
+      </View>}
+
+      <TouchableOpacity activeOpacity={0.9} onPress={onPress}>
       <Img local={true} style={styles.post} src={{ uri: item?.media[0]?.mediaUrl }} />
+
+      </TouchableOpacity>
       <View style={styles.contentContainer}>
         <Text style={styles.category}>{item?.category}</Text>
         {item?.category == 'RealEstate' && <View>
@@ -60,6 +64,14 @@ const Card = ({ onPress, item, userName, userImage, cardStyle }) => {
             <Text style={styles.detailText}>Numbers Of Seats: {item?.education?.admissionOpen?.totalSeats}</Text>
             <Text style={styles.detailText}>Date: {moment(item?.education?.admissionOpen?.admissionDate).format("MMM-DD-YYYY")}</Text>
             </View>}
+            {item?.type == 'ADVOCASY_ADD' && <View>
+              <Text style={styles.detailText}>Caption: {item?.advocasy?.caption}</Text>
+            </View>
+            }
+                 {item?.type == 'HOSTEL_ADD' && <View>
+              <Text style={styles.detailText}>Caption: {item?.caption}</Text>
+            </View>
+            }
       </View>
     </TouchableOpacity>
   );

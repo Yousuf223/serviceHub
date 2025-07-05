@@ -27,6 +27,8 @@ import API_URL, {
   CREATE_HEEDBACK,
   GET_ADD_LIST,
   TOGGLE_NOTIFICATION,
+  GET_PROFILE_DETAIL,
+  GET_MESSAGES,
 } from '../config/WebService';
 import ApiSauce from '../services/ApiSauce';
 import NavService from '../helpers/NavService';
@@ -78,6 +80,7 @@ function* getAddList() {
       );
       yield put(loaderStop());
       if (response) {
+        console.log('------ddfsdfsff',response)
         if (responseCallback) {
           responseCallback(response?.data);
         }
@@ -90,7 +93,34 @@ function* getAddList() {
     }
   }
 }
-
+function* getChatMessages() {
+  while (true) {
+    const { params, responseCallback } = yield take(ActionTypes.GET_MESSAGES.REQUEST);
+    yield put(loaderStart());
+    try {
+      const response = yield call(
+        callRequest,
+        GET_MESSAGES, 
+        '',
+        params,
+        {},
+        ApiSauce,
+      );
+      yield put(loaderStop());
+      if (response) {
+        console.log('------ddfsdfsff',response)
+        if (responseCallback) {
+          responseCallback(response?.data);
+        }
+      } else {
+        console.log('errrorr-logged');
+      }
+    } catch (error) {
+      responseCallback([]);
+      yield put(loaderStop());
+    }
+  }
+}
 function* getNotification() {
   while (true) {
     const { params, responseCallback } = yield take(
@@ -146,6 +176,36 @@ function* getProfile() {
       yield put(loaderStop());
       if (response) {
         yield put(loginUser(response?.data));
+        if (responseCallback) {
+          responseCallback(response?.data);
+        }
+      } else {
+        console.log('errrorr-logged');
+      }
+    } catch (error) {
+      console.log('errorofexplorepostlist', error);
+      // Util.DialogAlert(error?.message);
+      yield put(loaderStop());
+    }
+  }
+}
+function* getProfileDetail() {
+  while (true) {
+    const { params, responseCallback } = yield take(
+      ActionTypes.GET_PROFILE_DETAIL.REQUEST,
+    );
+    yield put(loaderStart());
+    try {
+      const response = yield call(
+        callRequest,
+        GET_PROFILE_DETAIL,
+        null,
+        '',
+        String(params?.id), // Pass the ID to the URL parameter
+        ApiSauce,
+      );
+      yield put(loaderStop());
+      if (response) {
         if (responseCallback) {
           responseCallback(response?.data);
         }
@@ -471,39 +531,7 @@ function* deleteComment() {
     }
   }
 }
-function* deletePost() {
-  while (true) {
-    const { params, responseCallback } = yield take(
-      ActionTypes.DELETE_POST.REQUEST,
-    );
-    console.log('paramsindeletepost', params);
-    yield put(loaderStart());
-    try {
-      const response = yield call(
-        callRequest,
-        DELETE_POST,
-        null,
-        '',
-        params?.post_id,
-        ApiSauce,
-      );
-      yield put(loaderStop());
-      if (response.status === 1) {
-        console.log('responseiofdeletepost', response);
-        if (responseCallback) {
-          responseCallback(true);
-        }
-        Util.DialogAlert(response.message, 'success');
-      } else {
-        console.log('errrorr-logged');
-      }
-    } catch (error) {
-      console.log('errorofdeletepost', error);
-      Util.DialogAlert(error?.message);
-      yield put(loaderStop());
-    }
-  }
-}
+
 
 function* profileDetails() {
   while (true) {
@@ -695,37 +723,7 @@ function* getNotificationOnOff() {
   }
 }
 
-function* uploadImage() {
-  while (true) {
-    const { params, responseCallback } = yield take(
-      ActionTypes.UPLOAD_IMAGE.REQUEST,
-    );
-    yield put(loaderStart());
-    try {
-      const response = yield call(
-        callRequest,
-        UPLOAD_image,
-        params,
-        '',
-        {},
-        ApiSauce,
-      );
-      yield put(loaderStop());
-      if (response?.data) {
-        console.log('responseofsendRequest', response);
-        if (responseCallback) {
-          responseCallback(response?.data);
-        }
-      } else {
-        console.log('errrorr-logged');
-      }
-    } catch (error) {
-      console.log('errorofsendREquest', error);
-      // Util.DialogAlert(error?.message);
-      yield put(loaderStop());
-    }
-  }
-}
+
 
 function* createHeedback() {
   while (true) {
@@ -775,12 +773,12 @@ export default function* root() {
   yield fork(deleteComment);
   yield fork(getAbout);
   yield fork(getTermsAndCondition);
-  yield fork(deletePost);
+  yield fork(getChatMessages);
   yield fork(profileDetails);
   yield fork(getPrivacy);
   yield fork(getNotificationOnOff);
-  yield fork(uploadImage);
   yield fork(createHeedback);
   yield fork(getAllLevelsById);
   yield fork(getNotification);
+  yield fork(getProfileDetail)
 }

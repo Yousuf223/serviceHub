@@ -96,7 +96,7 @@ const TabBar = ({ state, navigation }) => {
 
             let imageSrc = appIcons.heart;
             let title = '';
-            if (route.name === 'Message') imageSrc = appIcons.user, title = 'Message';
+            if (route.name === 'Message') imageSrc = appIcons.chats, title = 'Message';
             if (route.name === 'Home') imageSrc = appIcons.home, title = 'Home';
             if (route.name === 'Profile') imageSrc = appIcons.user, title = 'Profile';
 
@@ -112,8 +112,8 @@ const TabBar = ({ state, navigation }) => {
                   <Image
                     source={imageSrc}
                     style={{
-                      height: route.name === 'Profile' ? 21 : 21,
-                      width: route.name === 'Profile' ? 21 : 21,
+                      height: route.name === 'Message' ? 25 : 21,
+                      width: route.name === 'Message' ? 25 : 21,
                       tintColor: isFocused ? colors.white : colors.black,
                     }}
                     resizeMode="contain"

@@ -23,12 +23,12 @@ const BusinessDetail = ({ route }) => {
   const [data, setData] = useState([]);
   const [detail, setDetail] = useState(null);
   const [like, setLike] = useState(false);
- 
+
   useEffect(() => {
     const fetchDetails = async () => {
       try {
 
-  
+
         const response = await axios.get(
           `${BASE_URL}user/public-feed/details/${id}`,
           {
@@ -37,7 +37,7 @@ const BusinessDetail = ({ route }) => {
             },
           }
         );
-  
+
         const detailData = response?.data?.data;
         setDetail(detailData);
         setData(detailData?.media || []);
@@ -45,13 +45,13 @@ const BusinessDetail = ({ route }) => {
         console.error('Error fetching detail:', error);
       }
     };
-  
+
     fetchDetails();
   }, []);
   ;
 
   const renderCard = ({ item }) => (
-    <View style={{ marginHorizontal: 10,marginTop:10 }}>
+    <View style={{ marginHorizontal: 10, marginTop: 10 }}>
       <Image
         source={{ uri: item?.mediaUrl }}
         style={styles.headerImage}
@@ -62,7 +62,7 @@ const BusinessDetail = ({ route }) => {
 
   const renderConditionalDetails = () => {
     const item = detail;
-    console.log('itemitemitem',item)
+    console.log('itemitemitem', item?.category)
     if (!item) return null;
 
     if (item?.type === 'DOCTOR_APPOINTMENT') {
@@ -118,43 +118,51 @@ const BusinessDetail = ({ route }) => {
     }
 
     if (item?.category === 'RealEstate') {
-        const realEstate = item?.realEstate;
-        const specs = realEstate?.propertySpecifications || {};
-        const location = realEstate?.locationDetails || {};
-      
-        return (
-          <View>
-            <Text style={styles.detailText}>Title: {realEstate?.title}</Text>
-            <Text style={styles.detailText}>Description: {realEstate?.description}</Text>
-            <Text style={styles.detailText}>Property Type: {realEstate?.propertyType}</Text>
-            <Text style={styles.detailText}>Transaction Type: {realEstate?.transactionType}</Text>
-      
-            <Text style={styles.sectionTitle}>Location</Text>
-            <Text style={styles.detailText}>City: {location?.city}</Text>
-            <Text style={styles.detailText}>State: {location?.state}</Text>
-            <Text style={styles.detailText}>Full Address: {location?.fullAddress}</Text>
-      
-            <Text style={styles.sectionTitle}>Specifications</Text>
-            <Text style={styles.detailText}>Bedrooms: {specs?.bedrooms}</Text>
-            <Text style={styles.detailText}>Bathrooms: {specs?.bathrooms}</Text>
-            <Text style={styles.detailText}>Area Size: {specs?.areaSize} {specs?.unitType}</Text>
-            <Text style={styles.detailText}>Total Floors: {specs?.totalFloors}</Text>
-            <Text style={styles.detailText}>Furnishing Status: {specs?.furnishingStatus}</Text>
-            <Text style={styles.detailText}>Parking Available: {specs?.parkingAvailability ? 'Yes' : 'No'}</Text>
-          </View>
-        );
-      }
-      if (item?.category === 'Gym') {
-        const gym = item?.gym;
-      
-        return (
-          <View>
-            <Text style={styles.sectionTitle}>Gym</Text>
-            <Text style={styles.detailText}>Details: {gym?.details || 'No details available'}</Text>
-          </View>
-        );
-      }
-      
+      const realEstate = item?.realEstate;
+      const specs = realEstate?.propertySpecifications || {};
+      const location = realEstate?.locationDetails || {};
+
+      return (
+        <View>
+          <Text style={styles.detailText}>Title: {realEstate?.title}</Text>
+          <Text style={styles.detailText}>Description: {realEstate?.description}</Text>
+          <Text style={styles.detailText}>Property Type: {realEstate?.propertyType}</Text>
+          <Text style={styles.detailText}>Transaction Type: {realEstate?.transactionType}</Text>
+
+          <Text style={styles.sectionTitle}>Location</Text>
+          <Text style={styles.detailText}>City: {location?.city}</Text>
+          <Text style={styles.detailText}>State: {location?.state}</Text>
+          <Text style={styles.detailText}>Full Address: {location?.fullAddress}</Text>
+
+          <Text style={styles.sectionTitle}>Specifications</Text>
+          <Text style={styles.detailText}>Bedrooms: {specs?.bedrooms}</Text>
+          <Text style={styles.detailText}>Bathrooms: {specs?.bathrooms}</Text>
+          <Text style={styles.detailText}>Area Size: {specs?.areaSize} {specs?.unitType}</Text>
+          <Text style={styles.detailText}>Total Floors: {specs?.totalFloors}</Text>
+          <Text style={styles.detailText}>Furnishing Status: {specs?.furnishingStatus}</Text>
+          <Text style={styles.detailText}>Parking Available: {specs?.parkingAvailability ? 'Yes' : 'No'}</Text>
+        </View>
+      );
+    }
+    if (item?.category === 'Gym') {
+      const gym = item?.gym;
+
+      return (
+        <View>
+          <Text style={styles.sectionTitle}>Gym</Text>
+          <Text style={styles.detailText}>Details: {gym?.details || 'No details available'}</Text>
+        </View>
+      );
+    }
+    if (item?.category === 'Hostel') {
+      console.log('abc', item)
+      return (
+        <View>
+          <Text style={styles.sectionTitle}>hostal</Text>
+          <Text style={styles.detailText}>Details: {item?.caption || 'No details available'}</Text>
+        </View>
+      );
+    }
 
     return null;
   };
@@ -210,9 +218,9 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   headerImage: {
-    width: width - 40, 
+    width: width - 40,
     height: 250,
-    borderRadius: 10, 
+    borderRadius: 10,
   },
   iconContainer: {
     position: 'absolute',

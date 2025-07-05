@@ -53,7 +53,7 @@ export const appIcons = {
   calender: require('../assets/icons/calender.png'),
   time: require('../assets/icons/time.png'),
   arrowCircle: require('../assets/icons/arrowCircle.png'),
-  fire: require('../assets/icons/fire.png'),
+  chats: require('../assets/icons/chats.png'),
   camera: require('../assets/icons/camera.png'),
   event: require('../assets/icons/event.png'),
   shadow: require('../assets/icons/shadow.png'),

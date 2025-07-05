@@ -70,6 +70,22 @@ export function getAddList(params,responseCallback) {
 
   };
 }
+export function getChatMessages(params,responseCallback) {
+  return {
+    type: ActionTypes.GET_MESSAGES.REQUEST,
+    params,
+    responseCallback
+
+  };
+}
+export function getProfileDetail(params,responseCallback) {
+  return {
+    type: ActionTypes.GET_PROFILE_DETAIL.REQUEST,
+    params,
+    responseCallback
+
+  };
+}
 export function getAllLevels(params, responseCallback) {
   return {
     type: ActionTypes.GET_ALL_LEVELS.REQUEST,
@@ -218,13 +234,7 @@ export function editComment(params, responseCallback) {
     responseCallback,
   };
 }
-export function uploadImage(params, responseCallback) {
-  return {
-    type: ActionTypes.UPLOAD_IMAGE.REQUEST,
-    params,
-    responseCallback,
-  };
-}
+
 export function createHeedback(params, responseCallback) {
   return {
     type: ActionTypes.CREATE_HEEDBACK.REQUEST,
@@ -295,9 +305,9 @@ export function saveRefForCurrentVisibleView(viewIndex) {
     payload: viewIndex,
   };
 }
-// export function saveScoket(socket) {
-//   dispatch({type: 'SAVE_SOCKET', payload: socket});
-// }
+export function saveScoket(socket) {
+  dispatch({type: 'SAVE_SOCKET', payload: socket});
+}
 export function saveGlobalSocket(socket) {
   dispatch({type: 'SAVE_SOCKET', payload: socket});
 }

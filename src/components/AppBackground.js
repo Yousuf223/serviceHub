@@ -110,7 +110,8 @@ function AppBackground({
                 color: colors.black,
                 fontSize: size.large,
                 marginTop: Platform.OS === 'ios' ? 10 : 0,
-              fontWeight:"600"
+              fontWeight:"600",
+              textTransform:'capitalize'
               }}>
               {title}
             </Text>}
@@ -154,12 +155,13 @@ function AppBackground({
 
               }}>
               <Image
-                source={appIcons.dots}
+                source={appIcons.chats}
                 style={{
                   width: 25,
                   height: 25,
                   resizeMode: 'contain',
-                  transform: [{ rotateX: '45deg' }, { rotateZ: '90deg' }],
+                  tintColor:colors.black
+                  // transform: [{ rotateX: '45deg' }, { rotateZ: '90deg' }],
                 }}
               />
             </TouchableOpacity>

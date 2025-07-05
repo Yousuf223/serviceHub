@@ -94,9 +94,10 @@ export const GET_ABOUT = createRequestTypes('GET_ABOUT');
 export const GET_TERMSCONDITION = createRequestTypes('GET_TERMSCONDITION');
 export const GET_NOTIFICATION_ONOFF = createRequestTypes('GET_NOTIFICATION_ONOFF');
 export const GET_NOTIFICATION = createRequestTypes('GET_NOTIFICATION');
-export const UPLOAD_IMAGE = createRequestTypes('UPLOAD_IMAGE')
+export const GET_PROFILE_DETAIL = createRequestTypes('GET_PROFILE_DETAIL')
 export const CREATE_HEEDBACK = createRequestTypes('CREATE_HEEDBACK')
 export const TOGGLE_NOTIFICATION = createRequestTypes('TOGGLE_NOTIFICATION')
+export const GET_MESSAGES = createRequestTypes('GET_MESSAGES');
 export default {
   LOADING_STATE,
   SOCIAL_SIGNUP_USER,
@@ -148,7 +149,8 @@ export default {
   GET_ABOUT,
   GET_PRIVACY,
   GET_NOTIFICATION_ONOFF,
-  UPLOAD_IMAGE,
   CREATE_HEEDBACK  ,
-  TOGGLE_NOTIFICATION
+  TOGGLE_NOTIFICATION,
+  GET_PROFILE_DETAIL,
+  GET_MESSAGES
 };

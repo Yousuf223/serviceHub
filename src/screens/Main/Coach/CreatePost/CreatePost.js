@@ -37,7 +37,6 @@ const CreatePost = ({ }) => {
   const dispatch = useDispatch();
   const token = useSelector((state) => state.authReducer.userToken);
   const categoryType = useSelector((state) => state.appReducer?.categoryType);
-  console.log('useruseruser', categoryType)
   const [doctorName, setDoctorName] = useState('');
   const [speciality, setSpeciality] = useState('');
 
@@ -163,6 +162,35 @@ const CreatePost = ({ }) => {
 
   };
 
+
+  const advocasySubmit = () => {
+    if (!testDescription || image.length === 0) {
+      return Toast.show({ text1: 'Please fill all fields', type: 'error', visibilityTime: 3000 });
+    }
+    else{
+      dispatch(loaderStart());
+      const payload = new FormData();
+      payload.append('caption', testDescription)
+      image.forEach(img => payload.append('AddMedia', img));
+      console.log('payload',payload)
+      axios.post(`${BASE_URL}${categoryType == 'Hostel' ? 'hostel' : 'advocasy'}/create-add`, payload, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Authorization': `Bearer ${token}`
+        },
+      }).then(response => {
+        Toast.show({ text1: response?.data?.message, type: 'success', visibilityTime: 3000 });
+        dispatch(loaderStop());
+        NavService.navigate('BottomTabs', { name: 'Home' });
+      }).catch((error) => {
+      console.error('Error uploading form data:', error?.response?.data?.message || error);
+        dispatch(loaderStop());
+        // Toast.show({ text1: 'Failed to create post. Try again.', type: 'error', visibilityTime: 3000 });
+      });
+    }
+
+  };
+  console.log('categoryType:', categoryType);
   return (
     <AppBackground title={'Create Post'} onBack={() => NavService.goBack()}>
       {categoryType == 'RealEstate' && <RealState />}
@@ -284,7 +312,42 @@ const CreatePost = ({ }) => {
         <CustomButton buttonStyle={styles.buttonStyle} onPress={gymSubmit} title="Post" />
 
       </View>}
+      {categoryType == "Advocasy" || categoryType == 'Hostel' && <View>
+        <TextInput style={{
+          height: 200,
+          textAlignVertical: 'top',
+          width: '90%',
+          alignSelf: 'center',
+          marginBottom: 15,
+          borderWidth: 1,
+          borderColor: colors.lightGray,
+          borderRadius: 8,
+          paddingHorizontal: 10,
+          backgroundColor: colors.white,
+          marginTop:10
+        }} multiline={true}
+        placeholderTextColor={'#000'}
+          placeholder="Caption" value={testDescription} onChangeText={setTestDescription}
+          numberOfLines={4} />
+        <CustomImagePicker isMultiple onImageChange={updateImageInGallery}>
+          <Text style={{ marginHorizontal: 20, marginBottom: 10, color: '#000', fontWeight: '500', marginTop: 10 }}>Add Photos</Text>
+        </CustomImagePicker>
+        <View style={{ flexWrap: 'wrap', flexDirection: 'row', marginHorizontal: 20, }}>
+          {image.length > 0 &&
+            image.map((item, index) => (
+              <View key={index + 1} style={{ position: 'relative' }}>
+                <TouchableOpacity
+                  onPress={() => removeSelectedAsset(item.uri)}
+                  style={styles.crossContainer}>
+                  <Text style={styles.cross}>X</Text>
+                </TouchableOpacity>
+                <Image source={{ uri: item.uri }} style={styles.videoStyle} />
+              </View>
+            ))}
+        </View>
+        <CustomButton buttonStyle={styles.buttonStyle} onPress={advocasySubmit} title="Post" />
 
+      </View>}
     </AppBackground>
   );
 };

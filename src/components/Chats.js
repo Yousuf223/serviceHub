@@ -14,11 +14,14 @@ import { ASSETS_URL } from '../config/WebService';
 import { appIcons } from '../assets';
 import NavService from '../helpers/NavService';
 import { Image } from 'react-native';
+import { useSelector } from 'react-redux';
 
 const { width } = Dimensions.get('window');
 
 const Chats = ({ item, currentUser }) => {
-  const isMine = item.isMime
+  const userData = useSelector((state)=> state?.authReducer?.user)
+  const isMine = item._id === userData?._id;
+  console.log('itemitemitem', userData?._id);
 
   const [imageModal, setImageModal] = useState(false);
   const [chatImage, setChatImage] = useState(false);
@@ -63,7 +66,7 @@ const Chats = ({ item, currentUser }) => {
         }}>
         <View
           style={{
-            backgroundColor: isMine ?  colors.primary :colors.black,
+            backgroundColor: isMine ?  colors.primary :colors.lightGray1,
             borderRadius: 10,
             width: width - 100,
             padding: 10,
