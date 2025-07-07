@@ -34,8 +34,8 @@ const styles = StyleSheet.create({
 
     messageView: {
         height: 63,
-        backgroundColor: colors.lightGray1,
-        paddingHorizontal: 10,
+        backgroundColor: colors.lightGray2,
+        paddingHorizontal: 0,
         // borderTopRightRadius: 10,
         // borderTopLeftRadius: 10,
         // paddingRight: 20,
@@ -48,9 +48,9 @@ const styles = StyleSheet.create({
     inputCont: {
         width: "90%",
         height: 45,
-        // backgroundColor: colors.lightGray2,
+         backgroundColor: colors.lightGray2,
         marginLeft: 10,
-        paddingHorizontal: 15,
+        paddingHorizontal: 10,
         borderRadius: 8
     },
 

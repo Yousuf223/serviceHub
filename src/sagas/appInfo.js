@@ -29,6 +29,7 @@ import API_URL, {
   TOGGLE_NOTIFICATION,
   GET_PROFILE_DETAIL,
   GET_MESSAGES,
+  GET_CHAT_LIST,
 } from '../config/WebService';
 import ApiSauce from '../services/ApiSauce';
 import NavService from '../helpers/NavService';
@@ -43,6 +44,36 @@ function* getEventList() {
       const response = yield call(
         callRequest,
         GET_LIST,
+        null,
+        '',
+        {},
+        ApiSauce,
+      );
+      yield put(loaderStop());
+      if (response) {
+        console.log('----responseresponse', response?.data);
+        if (responseCallback) {
+          responseCallback(response?.data);
+        }
+      } else {
+        console.log('errrorr-logged');
+      }
+    } catch (error) {
+      responseCallback([]);
+      console.log('errorofgetpostlist', error);
+      // Util.DialogAlert(error?.message);
+      yield put(loaderStop());
+    }
+  }
+}
+function* getChatList() {
+  while (true) {
+    const { params, responseCallback } = yield take(ActionTypes.GET_CHAT_LIST.REQUEST);
+    yield put(loaderStart());
+    try {
+      const response = yield call(
+        callRequest,
+        GET_CHAT_LIST,
         null,
         '',
         {},
@@ -781,4 +812,5 @@ export default function* root() {
   yield fork(getAllLevelsById);
   yield fork(getNotification);
   yield fork(getProfileDetail)
+  yield fork(getChatList)
 }

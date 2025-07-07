@@ -220,7 +220,7 @@ class Drawer extends Component {
                 fontWeight: '600',
               }}
             >
-              David Miller
+              {user?.firstName} {user?.lastName}
             </Text>
             <Text
               numberOfLines={1}
@@ -240,7 +240,7 @@ class Drawer extends Component {
             bounces={false}
             showsVerticalScrollIndicator={false}
             keyExtractor={(item,index) => index?.toString()} 
-            data={user?.role == 'ServiceProvider' ? serviceMenuItems : userMenuItems}
+            data={user?.role == 'SERVICEPROVIDER' ? serviceMenuItems : userMenuItems}
             style={{
               height: '100%',
               paddingHorizontal: 20,

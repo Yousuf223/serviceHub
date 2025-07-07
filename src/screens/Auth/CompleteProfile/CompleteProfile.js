@@ -249,7 +249,7 @@ const CompleteProfile = ({ route }) => {
             <ActionSheetComponent
               ref={actionSheetServiceRef}
               title="Select Service"
-              dataset={['Educationist', 'Healthcare', 'Advocasy', 'RealEstate', 'Showroom', 'Salon', 'Gym', 'Hostel']}
+              dataset={['Educationist', 'Healthcare', 'Advocasy', 'RealEstate',  'Gym', 'Hostel']}
               onPress={setService}
             />
             <CustomButton

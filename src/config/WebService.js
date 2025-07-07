@@ -125,6 +125,11 @@ export const GET_LIST = {
   access_token_required: true,
   type: REQUEST_TYPE.GET,
 };
+export const GET_CHAT_LIST = {
+  route: 'chat/list',
+  access_token_required: true,
+  type: REQUEST_TYPE.GET,
+};
 export const GET_ADD_LIST = {
   route: 'user/public-feed',
   access_token_required: true,

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import {
   FlatList,
   Keyboard,
@@ -8,222 +8,207 @@ import {
   View,
   LayoutAnimation,
   Text,
+  Platform,
 } from 'react-native';
 import AppBackground from '../../../../components/AppBackground';
 import styles from './styles';
-import {appIcons, appImages} from '../../../../assets';
-import {colors} from '../../../../utils';
+import { appIcons } from '../../../../assets';
+import { colors } from '../../../../utils';
 import Img from '../../../../components/Img';
-import {connect} from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import Toast from 'react-native-toast-message';
 import {
   loaderStartWithDispatch,
   loaderStopWithDispatch,
   chatImage,
+  getChatMessages,
 } from '../../../../redux/actions/appAction';
 import Chats from '../../../../components/Chats';
+import ImagePicker from '../../../../components/ImagePicker'; // Assuming this is your custom component
 
-class Chat extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      messages:  [
-        { message: 'how are you', name: 'David Miller', isMime: false },
-        { message: 'how are you', name: 'David Miller', isMime: true },
-        { message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua', name: 'David Miller', isMime: false },
-        { message: 'how are you', name: 'David Miller', isMime: false },
-        { message: 'how are you', name: 'David Miller', isMime: false },
-        { message: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua', name: 'David Miller', isMime: true },
-        { message: 'how are you', name: 'David Miller', isMime: false },
-      ],
-    };
-    this.messageInput = React.createRef(null);
-  }
-  updateImageInGallery = (path, mime) => {
-    this.setState({image: path});
-  };
-  componentDidMount() {
-    loaderStartWithDispatch();
-    // this.response();
-    loaderStopWithDispatch();
-  }
-  componentWillUnmount() {
-    this.setState({messages: []});
-  }
-  // response = () => {
-  //   const socket = this.props?.socket;
-  //   console.log('SockettttInchat', socket);
-  //   // const recieverInfo = this?.props?.route?.params?.getUserProfile;
-  //   // const senderInfo = this?.props?.user;
-  //   const {payload} = this?.props?.route?.params;
-  //   if (socket && socket !== null && typeof socket == 'object' && socket?.emit !== undefined) {
-  //     socket?.emit('get_messages', {
-  //       sender_id: payload?.sender_id,
-  //       receiver_id: payload?.receiver_id,
-  //     });
-  //     loaderStopWithDispatch();
-  //     socket?.on('response', data => {
-  //       console.log('Dataaaaaaaaa', data);
-  //       if (data?.data?.length == 0) {
-  //         loaderStopWithDispatch();
-  //         return;
-  //       }
-  //       if (data?.object_type == 'get_messages') {
-  //         const chatList = data?.data || [];
-  //         this.setState({messages: chatList});
-  //       } else if (data?.object_type == 'get_message') {
-  //         this.setState(prevState => {
-  //           const currentMessages = [data?.data, ...prevState?.messages];
-  //           currentMessages.reverse();
-  //           return {
-  //             messages: currentMessages,
-  //           };
-  //         });
-  //       }
-  //       loaderStopWithDispatch();
-  //       LayoutAnimation.linear();
-  //     });
-  //     socket.on('error', data => {
-  //       console.log('datattttt', data);
-  //       loaderStopWithDispatch();
-  //     });
-  //   }
-  // };
-  render() {
-    const {messages, user} = this.state;
-    const {payload} = this?.props?.route?.params;
-    console.log('payloaaaddddd', payload);
-    // let messageInput = React.createRef(null);
-    // let message = React.createRef('');
-    const screenName = this.props.route.params.screenName;
-    if (Platform.OS === 'android') {
-      if (UIManager.setLayoutAnimationEnabledExperimental) {
-        UIManager.setLayoutAnimationEnabledExperimental(true);
+const Chat = ({ route, socket, user, chatImage }) => {
+  const dispatch = useDispatch();
+  const [messages, setMessages] = useState([
+  ]);
+
+  const messageInputRef = useRef(null);
+  const messageText = useRef('');
+  const [currentChatId, setCurrentChatId] = useState(null);
+  const { chatIds, userDetail } = route?.params;
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleNewMessage = (data) => {
+      loaderStopWithDispatch();
+      if (data?.newMessage) {
+        setMessages((prev) => [data.newMessage, ...prev]);
       }
+    };
+
+    const handleError = (error) => {
+      loaderStopWithDispatch();
+      Toast.show({
+        text1: 'Socket error',
+        text2: error?.message || 'An error occurred',
+        type: 'error',
+      });
+      console.error('Socket error:', error);
+    };
+
+    const handleJoinRoom = ({ chatId }) => {
+      if (chatId || chatIds) {
+        getMessages(chatId || chatIds);
+      }
+      setCurrentChatId(chatId || chatIds);
+    };
+
+    socket.on('joined-room', handleJoinRoom);
+    socket.on('new-message', handleNewMessage);
+    socket.on('error', handleError);
+
+    return () => {
+      socket.off('joined-room', handleJoinRoom);
+      socket.off('new-message', handleNewMessage);
+      socket.off('error', handleError);
+    };
+  }, [socket]);
+
+
+  useEffect(() => {
+    loaderStartWithDispatch();
+
+    if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
+      UIManager.setLayoutAnimationEnabledExperimental(true);
+    }
+    loaderStopWithDispatch();
+
+    return () => {
+      setMessages([]);
+    };
+  }, []);
+  const getMessages = (chatId) => {
+    const param = {
+      key: "chatId",
+      value: chatId
+    };
+    dispatch(getChatMessages(param, response => {
+      // console.log('msg response', response)
+      setMessages(response);
+    }));
+  }
+  const sendNewMessage = async (messageType, image) => {
+    if (!socket || typeof socket.emit !== 'function') {
+      Toast.show({
+        text1: 'Connection error. Please try again later.',
+        type: 'error',
+      });
+      return;
     }
 
-    // const sendNewMessage = async (messageType, image) => {
-    //   console.log('hdhskdksjdksjdsjkdjksjdk');
-    //   const socket = this.props?.socket;
-    //   if (messageType == 'image') {
-    //     let params = {
-    //       sender_id: payload?.sender_id,
-    //       receiver_id: payload?.receiver_id,
-    //       message: image,
-    //       type: messageType,
-    //     };
-    //     console.log('payloadinchat', params);
-    //     socket?.emit('send_message', params);
-    //     LayoutAnimation.linear();
-    //   } else if (messageType == 'text' && this.messageInput.current) {
-    //     loaderStartWithDispatch();
-    //     const data = {
-    //       sender_id: payload?.sender_id,
-    //       receiver_id: payload?.receiver_id,
-    //       message: this.messageInput?.current,
-    //       type: messageType,
-    //     };
-    //     console.log('payloadinchatpayloadinchat', data);
-    //     socket?.emit('send_message', data);
-    //     this.messageInput.current = '';
-    //     this.messageInput.clear();
-    //     LayoutAnimation.linear();
-    //   } else {
-    //     Toast.show({
-    //       text1: 'Please enter a message',
-    //       type: 'error',
-    //       visibilityTime: 3000,
-    //     });
-    //   }
-    // };
-    // const SendImage = async (path, mime, type) => {
-    //   const payload = new FormData();
-    //   if (path?.length) {
-    //     payload.append('message_image', {
-    //       uri: path,
-    //       type: mime,
-    //       name: `post${Date.now()}.${mime?.slice(mime.lastIndexOf('/') + 1)}`,
-    //     });
-    //   }
-    //   this.props.chatImage(payload, response => {
-    //     response && sendNewMessage('image', response);
-    //   });
-    // };
+    const trimmedMsg = messageText.current.trim();
+    if (!trimmedMsg) {
+      Toast.show({
+        text1: 'Please enter a message',
+        type: 'error',
+      });
+      return;
+    }
 
-    return (
-      <AppBackground back title={'Smith'}>
-        <View style={styles.cont}>
-          <FlatList
-            data={messages}
-            inverted
-            showsVerticalScrollIndicator={false}
-            style={styles.flatListStyle}
-            keyExtractor={(item,index) => index?.toString()} 
-            contentContainerStyle={styles.flatListCont}
-            renderItem={({item, index}) => {
-              console.log('item---------item---------item', item);
-              return (
-                <>
-                <Chats item={item} />
-                </>
-              );
-            }}
-          />
-          <View style={[styles.flexRow, styles.messageView]}>
-            <TouchableOpacity activeOpacity={0.8} onPress={() => {}}>
-              <ImagePicker
-                onImageChange={(path, mime, type) => {
-                  SendImage(path, mime, type);
-                }}>
-                <Img
-                  local
-                  src={appIcons.plus}
-                  style={styles.attachmentIcon}
-                  resizeMode={'contain'}
-                />
-              </ImagePicker>
-            </TouchableOpacity>
-            <View style={[styles.flexRow, styles.inputCont]}>
-              <TextInput
-                ref={input => {
-                  this.messageInput = input;
-                }}
-                numberOfLines={4}
-                multiline
-                style={styles.textInput}
-                placeholder="Type Message"
-                placeholderTextColor={colors.white}
-                value={this.messageInput}
-                onChangeText={text => {
-                  this.messageInput.current = text;
-                }}
+    loaderStartWithDispatch();
+
+    try {
+      const data = {
+        message: trimmedMsg,
+        chatId: currentChatId,
+      };
+
+      messageText.current = '';
+      if (messageInputRef.current) {
+        messageInputRef.current.clear();
+      }
+
+      socket.emit('send-message', data, (ack) => {
+        // Optional: check acknowledgement from server
+        loaderStopWithDispatch();
+        if (ack?.error) {
+          Toast.show({
+            text1: ack.error || 'Failed to send message',
+            type: 'error',
+          });
+        }
+      });
+
+      LayoutAnimation.linear();
+    } catch (error) {
+      loaderStopWithDispatch();
+      Toast.show({
+        text1: 'An unexpected error occurred',
+        type: 'error',
+      });
+    }
+  };
+
+
+
+  //   const formData = new FormData();
+  //   if (path?.length) {
+  //     formData.append('message_image', {
+  //       uri: path,
+  //       type: mime,
+  //       name: `post${Date.now()}.${mime?.split('/').pop()}`,
+  //     });
+  //   }
+  //   chatImage(formData, response => {
+  //     if (response) sendNewMessage('image', response);
+  //   });
+  // };
+  return (
+    <AppBackground back title={userDetail?.firstName + ' ' + userDetail?.lastName}>
+      <View style={styles.cont}>
+        <FlatList
+          data={messages}
+          inverted
+          showsVerticalScrollIndicator={false}
+          style={styles.flatListStyle}
+          keyExtractor={(_, index) => index.toString()}
+          contentContainerStyle={styles.flatListCont}
+          renderItem={({ item }) => <Chats item={item} />}
+        />
+
+        <View style={[styles.flexRow, styles.messageView]}>
+
+
+          <View style={[styles.flexRow, styles.inputCont]}>
+            <TextInput
+              ref={messageInputRef}
+              numberOfLines={4}
+              multiline
+              style={styles.textInput}
+              placeholder="Type Message"
+              placeholderTextColor={colors.white}
+              onChangeText={text => (messageText.current = text)}
+            />
+            <TouchableOpacity
+              activeOpacity={0.8}
+              onPress={() => sendNewMessage('text')}
+              style={styles.sendCont}>
+              <Img
+                local
+                src={appIcons.send}
+                style={styles.icon}
+                resizeMode={'contain'}
               />
-              <TouchableOpacity
-                activeOpacity={0.8}
-                // onPress={() => {
-                //   sendNewMessage('text');
-                // }}
-                style={styles.sendCont}>
-                <Img
-                  local
-                  src={appIcons.send}
-                  style={styles.icon}
-                  resizeMode={'contain'}
-                />
-              </TouchableOpacity>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
-      </AppBackground>
-    );
-  }
-}
+      </View>
+    </AppBackground>
+  );
+};
 
-function mapStateToProps({authReducer: {user}, appReducer: {socket}}) {
-  return {
-    user,
-    socket,
-  };
-}
-const actions = {chatImage};
-export default connect(mapStateToProps, actions)(Chat);
+const mapStateToProps = ({ authReducer: { user }, appReducer: { socket } }) => ({
+  user,
+  socket,
+});
+
+export default connect(mapStateToProps, { chatImage })(Chat);

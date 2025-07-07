@@ -98,6 +98,7 @@ export const GET_PROFILE_DETAIL = createRequestTypes('GET_PROFILE_DETAIL')
 export const CREATE_HEEDBACK = createRequestTypes('CREATE_HEEDBACK')
 export const TOGGLE_NOTIFICATION = createRequestTypes('TOGGLE_NOTIFICATION')
 export const GET_MESSAGES = createRequestTypes('GET_MESSAGES');
+export const GET_CHAT_LIST = createRequestTypes('GET_CHAT_LIST');
 export default {
   LOADING_STATE,
   SOCIAL_SIGNUP_USER,
@@ -152,5 +153,6 @@ export default {
   CREATE_HEEDBACK  ,
   TOGGLE_NOTIFICATION,
   GET_PROFILE_DETAIL,
-  GET_MESSAGES
+  GET_MESSAGES,
+  GET_CHAT_LIST
 };

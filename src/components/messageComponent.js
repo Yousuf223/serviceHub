@@ -18,22 +18,18 @@ const { width } = Dimensions.get('screen');
 
 const MessageComponent = ({ onPress,item, cardStyle }) => {
   const [like, setLike] = useState(false);
-  console.log('itemitemitem',item)
   return (
     <TouchableOpacity activeOpacity={0.8} onPress={onPress} style={[styles.card, cardStyle]}>
         <View style={{flex:1,}}>
-        <Image style={styles.userImg} source={appIcons.userPlaceholder} />
+        <Image style={styles.userImg} source={{uri: item?.otherParticipant?.profilePicture}} />
         </View>
       
-        <View style={{flex:6,paddingLeft:10,top:12}}>
-            <Text style={styles.title}>Jos Smith</Text>
-            <Text style={styles.dec}>I how are you</Text>
+        <View style={{flex:6,paddingLeft:20,top:12}}>
+            <Text style={styles.title}>{item?.otherParticipant?.firstName + ' ' + item?.otherParticipant?.lastName}</Text>
+            <Text style={styles.dec}>{item?.message}</Text>
         </View>
-        <View style={{flex:1}}>
-            <Text style={styles.time}>8 min</Text>
-            <View style={styles.round}>
-                <Text style={{textAlign:'center',color:colors.white,fontSize:12}}>4</Text>
-            </View>
+        <View style={{flex:3}}>
+            <Text style={styles.time}>{moment(item?.createdAt).fromNow()}</Text>
         </View>
     </TouchableOpacity>
   );
@@ -71,8 +67,8 @@ const styles = StyleSheet.create({
     paddingLeft:10
   },
   userImg:{
-    width:60,
-    height:60,
+    width:55,
+    height:55,
     borderRadius:60
   },
   time:{

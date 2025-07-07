@@ -34,35 +34,45 @@ const Chat = ({ route, socket, user, chatImage }) => {
   const messageInputRef = useRef(null);
   const messageText = useRef('');
   const [currentChatId, setCurrentChatId] = useState(null);
-  const { payload, userDetail } = route?.params;
+  const { chatIds, userDetail } = route?.params;
   useEffect(() => {
-    if (socket) {
-      socket.on("joined-room", ({ chatId }) => {
-        console.log("Joined chat room with ID:", chatId);
-        if (chatId) {
-          getMessages(chatId)
-        }
-        setCurrentChatId(chatId); // or dispatch to Redux
+    if (!socket) return;
 
-        socket.on("new-message", (data) => {
-          console.log('00jjjjjj', data)
-          if (data) {
-            loaderStopWithDispatch()
-            setMessages((prevMessages) => [...prevMessages, data?.newMessage]);
-          }
-        });
-        socket.on("error", (error) => {
-          loaderStopWithDispatch()
-          console.error("Error:", error);
-        });
+    const handleNewMessage = (data) => {
+      loaderStopWithDispatch();
+      if (data?.newMessage) {
+        setMessages((prev) => [data.newMessage, ...prev]);
+      }
+    };
+
+    const handleError = (error) => {
+      loaderStopWithDispatch();
+      Toast.show({
+        text1: 'Socket error',
+        text2: error?.message || 'An error occurred',
+        type: 'error',
       });
-    }
+      console.error('Socket error:', error);
+    };
 
+    const handleJoinRoom = ({ chatId }) => {
+      if (chatId || chatIds) {
+        getMessages(chatId || chatIds);
+      }
+      setCurrentChatId(chatId || chatIds);
+    };
+
+    socket.on('joined-room', handleJoinRoom);
+    socket.on('new-message', handleNewMessage);
+    socket.on('error', handleError);
 
     return () => {
-      socket.off("joined-room");
+      socket.off('joined-room', handleJoinRoom);
+      socket.off('new-message', handleNewMessage);
+      socket.off('error', handleError);
     };
-  }, [socket, currentChatId]);
+  }, [socket]);
+
 
   useEffect(() => {
     loaderStartWithDispatch();
@@ -70,9 +80,6 @@ const Chat = ({ route, socket, user, chatImage }) => {
     if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
       UIManager.setLayoutAnimationEnabledExperimental(true);
     }
-
-    // response(); // Optional socket logic
-
     loaderStopWithDispatch();
 
     return () => {
@@ -85,34 +92,64 @@ const Chat = ({ route, socket, user, chatImage }) => {
       value: chatId
     };
     dispatch(getChatMessages(param, response => {
+      // console.log('msg response', response)
       setMessages(response);
     }));
   }
-  const sendNewMessage = (messageType, image) => {
-    if (!socket || typeof socket.emit !== 'function') return;
-    if (messageText.current.trim()) {
-      loaderStartWithDispatch();
+  const sendNewMessage = async (messageType, image) => {
+    if (!socket || typeof socket.emit !== 'function') {
+      Toast.show({
+        text1: 'Connection error. Please try again later.',
+        type: 'error',
+      });
+      return;
+    }
+
+    const trimmedMsg = messageText.current.trim();
+    if (!trimmedMsg) {
+      Toast.show({
+        text1: 'Please enter a message',
+        type: 'error',
+      });
+      return;
+    }
+
+    loaderStartWithDispatch();
+
+    try {
       const data = {
-        message: messageText.current.trim(),
+        message: trimmedMsg,
         chatId: currentChatId,
       };
-      console.log('datadata', data)
-      socket.emit('send-message', data);
+
       messageText.current = '';
       if (messageInputRef.current) {
         messageInputRef.current.clear();
       }
+
+      socket.emit('send-message', data, (ack) => {
+        // Optional: check acknowledgement from server
+        loaderStopWithDispatch();
+        if (ack?.error) {
+          Toast.show({
+            text1: ack.error || 'Failed to send message',
+            type: 'error',
+          });
+        }
+      });
+
       LayoutAnimation.linear();
-    } else {
+    } catch (error) {
+      loaderStopWithDispatch();
       Toast.show({
-        text1: 'Please enter a message',
+        text1: 'An unexpected error occurred',
         type: 'error',
-        visibilityTime: 3000,
       });
     }
   };
 
-  // const SendImage = (path, mime, type) => {
+
+
   //   const formData = new FormData();
   //   if (path?.length) {
   //     formData.append('message_image', {
@@ -125,7 +162,6 @@ const Chat = ({ route, socket, user, chatImage }) => {
   //     if (response) sendNewMessage('image', response);
   //   });
   // };
-
   return (
     <AppBackground back title={userDetail?.firstName + ' ' + userDetail?.lastName}>
       <View style={styles.cont}>

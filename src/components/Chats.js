@@ -20,8 +20,8 @@ const { width } = Dimensions.get('window');
 
 const Chats = ({ item, currentUser }) => {
   const userData = useSelector((state)=> state?.authReducer?.user)
-  const isMine = item._id === userData?._id;
-  console.log('itemitemitem', userData?._id);
+  const isMine = item?.sender?._id === userData?._id;
+  console.log('itemitemitem',item);
 
   const [imageModal, setImageModal] = useState(false);
   const [chatImage, setChatImage] = useState(false);
@@ -42,19 +42,18 @@ const Chats = ({ item, currentUser }) => {
         //   })
         // }
         >
-          {/* <Image
-            source={
-              appIcons.userPlaceholder
-            }
+          <Image
+            source={ item?.sender?.profilePicture ? { uri: item?.sender?.profilePicture } : appIcons.userPlaceholder}
+            resizeMode='constain'
             style={{
-              width: 30,
-              height: 30,
+              width: 33,
+              height: 33,
               marginTop: 20,
               bottom: 5,
               borderRadius: 50,
             }}
           />
-          <Text numberOfLines={2} style={styles.username}>
+          {/* <Text numberOfLines={2} style={styles.username}>
             {!isMine && item?.name}
           </Text> */}
         </TouchableOpacity>
@@ -106,7 +105,7 @@ const Chats = ({ item, currentUser }) => {
                 ...appStyles.font12,
                 ...appStyles.family_SofiaPro_Regular,
               }}>
-              12:20:PM
+              {moment(item?.createdAt).format('hh:mm A')}
             </Text>
           </View>
         </View>

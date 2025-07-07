@@ -62,6 +62,12 @@ export function getEventList(responseCallback) {
     responseCallback,
   };
 }
+export function getChatList(responseCallback) {
+  return {
+    type: ActionTypes.GET_CHAT_LIST.REQUEST,
+    responseCallback,
+  };
+}
 export function getAddList(params,responseCallback) {
   return {
     type: ActionTypes.GET_ADD_LIST.REQUEST,
