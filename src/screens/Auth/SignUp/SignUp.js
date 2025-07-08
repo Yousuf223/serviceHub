@@ -89,7 +89,7 @@ const SignUp = ({route}) => {
             </View>
 
             {/* Logo Text */}
-            <Text style={styles.logoText}>Service Hub</Text>
+            <Text style={styles.logoText}>Smart World</Text>
           </View>
           {/* <View>
             <Image style={styles.applogo} source={appLogos.appLogo} />

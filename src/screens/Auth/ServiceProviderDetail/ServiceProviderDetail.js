@@ -469,7 +469,7 @@ const ServiceProviderDetail = ({ route }) => {
               value={consultationFee}
               keyboardType="numeric"
               onChangeText={setConsultationFee}
-              containerStyle={styles.containerStyle}
+              containerStyle={[styles.containerStyle, { width: '90%' }]}
             />
 
             <Text style={styles.title}>Years of Experience</Text>
@@ -478,7 +478,7 @@ const ServiceProviderDetail = ({ route }) => {
               value={experienceYears}
               keyboardType="numeric"
               onChangeText={setExperienceYears}
-              containerStyle={styles.containerStyle}
+              containerStyle={[styles.containerStyle, { width: '90%' }]}
             />
 
             <Text style={styles.title}>Bar Council</Text>
@@ -486,7 +486,7 @@ const ServiceProviderDetail = ({ route }) => {
               placeholder="Bar Council"
               value={barCouncil}
               onChangeText={setBarCouncil}
-              containerStyle={styles.containerStyle}
+              containerStyle={[styles.containerStyle, { width: '90%' }]}
             />
 
             <Text style={[styles.title, { paddingTop: 10 }]}>Categories</Text>

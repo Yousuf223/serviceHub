@@ -30,6 +30,7 @@ import API_URL, {
   GET_PROFILE_DETAIL,
   GET_MESSAGES,
   GET_CHAT_LIST,
+  GET_ME,
 } from '../config/WebService';
 import ApiSauce from '../services/ApiSauce';
 import NavService from '../helpers/NavService';
@@ -161,7 +162,7 @@ function* getNotification() {
     try {
       const response = yield call(
         callRequest,
-        GET_NOTIFICATION,
+        GET_ME,
         null,
         '',
         {},

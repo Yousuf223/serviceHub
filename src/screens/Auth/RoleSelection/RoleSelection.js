@@ -41,7 +41,7 @@ class RoleSelection extends Component {
             <View style={styles.icon}>
               <Text style={styles.iconText}>🔧</Text>
             </View>
-            <Text style={styles.logoText}>Service Hub</Text>
+            <Text style={styles.logoText}>Smart World</Text>
           </View> 
           <View style={{flex:1}}>
           <CustomButton

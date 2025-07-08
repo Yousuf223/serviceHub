@@ -60,7 +60,7 @@ const Login = ({ navigation,route}) => {
             <View style={styles.icon}>
               <Text style={styles.iconText}>🔧</Text>
             </View>
-            <Text style={styles.logoText}>Service Hub</Text>
+            <Text style={styles.logoText}>Smart World</Text>
           </View>
           <Text style={styles.title}>Email</Text>
           <CustomTextInput

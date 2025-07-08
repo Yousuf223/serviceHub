@@ -48,9 +48,9 @@ const Profile = () => {
                 {/* <TouchableOpacity style={styles.btn}>
                     <Text style={styles.btnText}>Edit Business</Text>
                 </TouchableOpacity> */}
-                <TouchableOpacity style={styles.btn}>
+                {/* <TouchableOpacity style={styles.btn}>
                     <Text style={styles.btnText}>Edit Profile</Text>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
             </View>
 
             <View style={styles.cardData}>

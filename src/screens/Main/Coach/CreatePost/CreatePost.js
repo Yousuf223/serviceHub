@@ -312,7 +312,8 @@ const CreatePost = ({ }) => {
         <CustomButton buttonStyle={styles.buttonStyle} onPress={gymSubmit} title="Post" />
 
       </View>}
-      {categoryType == "Advocasy" || categoryType == 'Hostel' && <View>
+      { categoryType == 'Hostel' &&
+       <View>
         <TextInput style={{
           height: 200,
           textAlignVertical: 'top',
@@ -347,7 +348,43 @@ const CreatePost = ({ }) => {
         </View>
         <CustomButton buttonStyle={styles.buttonStyle} onPress={advocasySubmit} title="Post" />
 
-      </View>}
+      </View>
+      }
+      {categoryType == "Advocasy" &&   <View>
+        <TextInput style={{
+          height: 200,
+          textAlignVertical: 'top',
+          width: '90%',
+          alignSelf: 'center',
+          marginBottom: 15,
+          borderWidth: 1,
+          borderColor: colors.lightGray,
+          borderRadius: 8,
+          paddingHorizontal: 10,
+          backgroundColor: colors.white,
+          marginTop:10
+        }} multiline={true}
+        placeholderTextColor={'#000'}
+          placeholder="Caption" value={testDescription} onChangeText={setTestDescription}
+          numberOfLines={4} />
+        <CustomImagePicker isMultiple onImageChange={updateImageInGallery}>
+          <Text style={{ marginHorizontal: 20, marginBottom: 10, color: '#000', fontWeight: '500', marginTop: 10 }}>Add Photos</Text>
+        </CustomImagePicker>
+        <View style={{ flexWrap: 'wrap', flexDirection: 'row', marginHorizontal: 20, }}>
+          {image.length > 0 &&
+            image.map((item, index) => (
+              <View key={index + 1} style={{ position: 'relative' }}>
+                <TouchableOpacity
+                  onPress={() => removeSelectedAsset(item.uri)}
+                  style={styles.crossContainer}>
+                  <Text style={styles.cross}>X</Text>
+                </TouchableOpacity>
+                <Image source={{ uri: item.uri }} style={styles.videoStyle} />
+              </View>
+            ))}
+        </View>
+        <CustomButton buttonStyle={styles.buttonStyle} onPress={advocasySubmit} title="Post" />
+      </View> }
     </AppBackground>
   );
 };

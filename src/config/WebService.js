@@ -145,8 +145,8 @@ export const GET_ALL_LEVELS = {
   access_token_required: true,
   type: REQUEST_TYPE.GET,
 };
-export const GET_NOTIFICATION = {
-  route: 'users/notifications',
+export const GET_ME = {
+  route: 'auth/get-me',
   access_token_required: true,
   type: REQUEST_TYPE.GET,
 };
