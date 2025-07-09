@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {Text, TouchableOpacity, View, Image, Platform} from 'react-native';
-import {connect, useDispatch} from 'react-redux';
+import { useDispatch} from 'react-redux';
 import * as EmailValidator from 'email-validator';
 import CustomBackground from '../../../components/CustomBackground';
 import CustomButton from '../../../components/CustomButton';

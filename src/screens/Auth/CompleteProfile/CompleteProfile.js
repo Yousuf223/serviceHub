@@ -22,25 +22,18 @@ import {
   addProfilePicture,
   loginUser,
 } from '../../../redux/actions/authAction';
-import ActionSheet from 'react-native-actionsheet';
 import styles from './styles';
 import { colors } from '../../../utils';
-import DateTimePickerModal from 'react-native-modal-datetime-picker';
-import moment from 'moment';
 import NavService from '../../../helpers/NavService';
-import { cities, states } from '../../../utils/dummyData';
 import ActionSheetComponent from '../../../components/ActionSheetComponent';
-import AppBackground from '../../../components/AppBackground';
-import GooglePlaceAutocomplete from '../../../components/GooglePlaceAutocomplete';
 import { BASE_URL } from '../../../config/WebService';
 import axios from 'axios';
 import { loaderStart, loaderStop } from '../../../redux/actions/appAction';
 
 const CompleteProfile = ({ route }) => {
   const role = route?.params?.role
-  console.log('rolerole', role)
   const actionSheetGenderRef = useRef();
-    const actionSheetServiceRef = useRef();
+  const actionSheetServiceRef = useRef();
   const phoneInput = useRef();
   const dispatch = useDispatch()
   const token = useSelector((state) => state.authReducer.userToken)
@@ -74,10 +67,10 @@ const CompleteProfile = ({ route }) => {
     if (!lastName) return 'Last Name field can’t be empty';
     if (!gender) return 'Gender field can’t be empty';
     if (!phoneNumber) return 'Phone Number field can’t be empty';
-    if(role == 'SERVICEPROVIDER'){
+    if (role == 'SERVICEPROVIDER') {
       if (!service) return 'Category field can’t be empty';
     }
-   
+
     if (!profileImage) return 'Please Select Profile Image';
     return null;
   };
@@ -99,10 +92,10 @@ const CompleteProfile = ({ route }) => {
     formData.append('gender', gender == 'Male' ? 'male' : 'female');
     formData.append('contactNumber', phoneNumber);
 
-    if(role=="SERVICEPROVIDER"){
+    if (role == "SERVICEPROVIDER") {
       formData.append('category', service);
     }
-    else{
+    else {
       formData.append('category', 'abc');
     }
     if (profileImage) {
@@ -132,7 +125,7 @@ const CompleteProfile = ({ route }) => {
           dispatch(loginUser(response.data?.data?.user))
         } else {
           dispatch(loaderStop())
-          NavService.navigate('ServiceProviderDetail',{data:response.data?.data})
+          NavService.navigate('ServiceProviderDetail', { data: response.data?.data })
         }
 
       }
@@ -217,29 +210,29 @@ const CompleteProfile = ({ route }) => {
                 source={appIcons.arrowDown}
               />
             </TouchableOpacity>
-            {role == 'SERVICEPROVIDER' &&<>
+            {role == 'SERVICEPROVIDER' && <>
               <Text style={[styles.title, { paddingTop: 10 }]}>
-              Business Category
-            </Text>
-            <TouchableOpacity
-              activeOpacity={0}
-              style={styles.inputstyle}
-              onPress={() => actionSheetServiceRef.current.show()}>
-              <Text style={styles.dateOfbirth}>
-                {service || 'Select Bussiness'}
+                Business Category
               </Text>
-              <Image
-                style={{
-                  width: 15,
-                  height: 15,
-                  resizeMode: 'contain',
-                  tintColor: colors.primary,
-                }}
-                source={appIcons.arrowDown}
-              />
-            </TouchableOpacity>
+              <TouchableOpacity
+                activeOpacity={0}
+                style={styles.inputstyle}
+                onPress={() => actionSheetServiceRef.current.show()}>
+                <Text style={styles.dateOfbirth}>
+                  {service || 'Select Bussiness'}
+                </Text>
+                <Image
+                  style={{
+                    width: 15,
+                    height: 15,
+                    resizeMode: 'contain',
+                    tintColor: colors.primary,
+                  }}
+                  source={appIcons.arrowDown}
+                />
+              </TouchableOpacity>
             </>}
-    
+
             <ActionSheetComponent
               ref={actionSheetGenderRef}
               title="Select Gender"
@@ -249,7 +242,7 @@ const CompleteProfile = ({ route }) => {
             <ActionSheetComponent
               ref={actionSheetServiceRef}
               title="Select Service"
-              dataset={['Educationist', 'Healthcare', 'Advocasy', 'RealEstate',  'Gym', 'Hostel']}
+              dataset={['Educationist', 'Healthcare', 'Advocasy', 'RealEstate', 'Gym', 'Hostel']}
               onPress={setService}
             />
             <CustomButton
