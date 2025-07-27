@@ -73,6 +73,7 @@ const toastConfig = {
 
 
 const App = () => {
+  console.log('Checkout')
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor}>
