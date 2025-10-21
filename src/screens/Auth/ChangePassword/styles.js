@@ -39,6 +39,30 @@ const styles = StyleSheet.create({
     //   // paddingVertical:1,
     //  borderRadius: 30
   },
+      container1: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    alignSelf:"center",
+    marginVertical:22
+  },
+  icon: {
+    width: 100,
+    height: 100,
+    borderRadius: 50,
+    backgroundColor: colors.primary,  // Blue color for the circle
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 10,  // Space between icon and text
+  },
+  iconText: {
+    fontSize: 40,
+    color: '#fff', 
+  },
+  logoText: {
+    fontSize: 24,
+    fontWeight: 'bold',
+    color:  colors.primary, // Blue color for the logo text
+  },
 });
 
 export default styles;

@@ -117,15 +117,13 @@ const CompleteProfile = ({ route }) => {
       });
       if (response) {
         console.log('sadsada', response?.data)
-        if (!role === 'SERVICEPROVIDER') {
-          //   NavService.navigate('Login',{
-          //     role: role
-          // })
-          dispatch(loaderStop())
-          dispatch(loginUser(response.data?.data?.user))
-        } else {
+        if (role === 'SERVICEPROVIDER') {
           dispatch(loaderStop())
           NavService.navigate('ServiceProviderDetail', { data: response.data?.data })
+
+        } else {
+          dispatch(loaderStop())
+          dispatch(loginUser(response.data?.data?.user))
         }
 
       }
@@ -184,6 +182,7 @@ const CompleteProfile = ({ route }) => {
               value={lastName}
               onChangeText={setLastName}
               containerStyle={styles.containerStyle}
+            
             />
             <Text style={styles.title}>Phone Number</Text>
             <CustomTextInput
@@ -191,6 +190,8 @@ const CompleteProfile = ({ route }) => {
               value={phoneNumber}
               onChangeText={setPhoneNumber}
               containerStyle={styles.containerStyle}
+                keyboardType='numeric'
+                  maxLength={12}
             />
             <Text style={styles.title}>Gender</Text>
             <TouchableOpacity

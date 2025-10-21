@@ -31,6 +31,7 @@ import API_URL, {
   GET_MESSAGES,
   GET_CHAT_LIST,
   GET_ME,
+  VIEW_REVIEW,
 } from '../config/WebService';
 import ApiSauce from '../services/ApiSauce';
 import NavService from '../helpers/NavService';
@@ -531,7 +532,33 @@ function* listLikes() {
     }
   }
 }
-
+function* createRating() {
+  while (true) {
+    const { payload } = yield take(ActionTypes.CREATE_HEEDBACK.REQUEST);
+    console.log('payloadpayload',payload)
+    yield put(loaderStart());
+    try {
+      const response = yield call(
+        callRequest,
+        CREATE_HEEDBACK,
+        payload,
+        '',
+        {},
+        ApiSauce,
+      );
+      yield put(loaderStop());
+      if (response) {
+        console.log('login user', response?.data);
+           Util.DialogAlert(response.message, 'success');
+           NavService.goBack()
+      }
+    } catch (error) {
+      console.log('-----errorerror----', error);
+      yield put(loaderStop());
+      Util.DialogAlert(error.message);
+    }
+  }
+}
 function* deleteComment() {
   while (true) {
     const { params, responseCallback } = yield take(
@@ -757,38 +784,35 @@ function* getNotificationOnOff() {
 
 
 
-function* createHeedback() {
+
+function* viewReview() {
   while (true) {
-    const { params, responseCallback } = yield take(
-      ActionTypes.CREATE_HEEDBACK.REQUEST,
-    );
+    const { params, responseCallback } = yield take(ActionTypes.VIEW_REVIEW.REQUEST);
     yield put(loaderStart());
     try {
       const response = yield call(
         callRequest,
-        CREATE_HEEDBACK,
-        params,
+        VIEW_REVIEW, 
         '',
+        params,
         {},
         ApiSauce,
       );
       yield put(loaderStop());
-      console.log('responseresponse', response);
       if (response) {
-        NavService.navigate('FeedBackSend');
-        Util.DialogAlert(response.message, 'success');
-        console.log('responseofsendRequest', response);
+        console.log('------ddfsdfsff',response)
+        if (responseCallback) {
+          responseCallback(response?.data);
+        }
       } else {
         console.log('errrorr-logged');
       }
     } catch (error) {
-      console.log('errorofsendREquest', error);
-      Util.DialogAlert(error?.error);
+      responseCallback([]);
       yield put(loaderStop());
     }
   }
 }
-
 
 export default function* root() {
   yield fork(getEventList);
@@ -809,9 +833,10 @@ export default function* root() {
   yield fork(profileDetails);
   yield fork(getPrivacy);
   yield fork(getNotificationOnOff);
-  yield fork(createHeedback);
   yield fork(getAllLevelsById);
   yield fork(getNotification);
-  yield fork(getProfileDetail)
-  yield fork(getChatList)
+  yield fork(getProfileDetail);
+  yield fork(getChatList);
+  yield fork(createRating);
+  yield fork(viewReview);
 }

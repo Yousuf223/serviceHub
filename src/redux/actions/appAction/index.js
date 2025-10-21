@@ -84,6 +84,12 @@ export function getChatMessages(params,responseCallback) {
 
   };
 }
+export function createRating(payload) {
+  return {
+    type: ActionTypes.CREATE_HEEDBACK.REQUEST,
+    payload,
+  };
+}
 export function getProfileDetail(params,responseCallback) {
   return {
     type: ActionTypes.GET_PROFILE_DETAIL.REQUEST,
@@ -124,6 +130,13 @@ export function getAllLevelsById(params, responseCallback) {
 export function getProfile(params, responseCallback) {
   return {
     type: ActionTypes.GET_PROFILE.REQUEST,
+    params,
+    responseCallback,
+  };
+}
+export function viewReview(params, responseCallback) {
+  return {
+    type: ActionTypes.VIEW_REVIEW.REQUEST,
     params,
     responseCallback,
   };

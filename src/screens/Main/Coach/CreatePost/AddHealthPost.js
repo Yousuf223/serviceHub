@@ -129,9 +129,9 @@ const HealthCard = ({ }) => {
             {activeTab === 'teacherVacancy' ? (
                 <>
                     <CustomTextInput placeholder="Details" value={testDescription} onChangeText={setTestDescription} containerStyle={styles.containerStyle} />
-                    <CustomTextInput placeholder="Min Qualification" value={minQualification} onChangeText={setMinQualification} containerStyle={styles.containerStyle} />
-                    <CustomTextInput placeholder="For Class" value={forClass} onChangeText={setForClass} containerStyle={styles.containerStyle} />
-                    <CustomTextInput placeholder="Salary Package" value={salaryPackage} onChangeText={setSalaryPackage} keyboardType="numeric" containerStyle={styles.containerStyle} />
+                    <CustomTextInput keyboardType='numeric' placeholder="Min Qualification" value={minQualification} onChangeText={setMinQualification} containerStyle={styles.containerStyle} />
+                    <CustomTextInput keyboardType='numeric' placeholder="For Class" value={forClass} onChangeText={setForClass} containerStyle={styles.containerStyle} />
+                    <CustomTextInput keyboardType='numeric' placeholder="Salary Package" value={salaryPackage} onChangeText={setSalaryPackage} keyboardType="numeric" containerStyle={styles.containerStyle} />
                 </>
             ) : (
                 <>

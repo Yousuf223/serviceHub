@@ -111,6 +111,7 @@ export default function CustomTextInput(props) {
             }, inputStyle]}
             secureTextEntry={hidden}
             autoCapitalize="none"
+            
            
             {...props}
           />
@@ -184,6 +185,8 @@ export function ProfileTextInput(props) {
           fontFamily: family.Outfit_Regular,
         }}
         placeholderTextColor={'#7E7E7E'}
+      
+
         {...props}
       />
     </View>

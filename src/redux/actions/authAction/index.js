@@ -63,6 +63,15 @@ export function otpVerify(payload, role,user_id,screenName) {
     screenName
   };
 }
+export function verifyOtpForgot(payload, role,user_id,screenName) {
+  return {
+    type: ActionTypes.VERIFY_OTP_FORGOT.REQUEST,
+    payload,
+    role,
+    user_id,
+    screenName
+  };
+}
 export function forgotPassword(payload) {
   return {
     type: ActionTypes.FORGOT_PASSWORD.REQUEST,

@@ -82,7 +82,7 @@ const Login = ({ navigation,route}) => {
             maxLength={30}
           />
           <TouchableOpacity
-            onPress={() => navigation.navigate('ForgotPassword')}
+            onPress={() => navigation.navigate('ForgotPassword',{ role})}
             activeOpacity={0.8}>
             <Text style={styles.subText}>Forgot Password?</Text>
           </TouchableOpacity>

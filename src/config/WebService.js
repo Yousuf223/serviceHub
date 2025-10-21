@@ -3,9 +3,9 @@ import ApiSauce from '../services/ApiSauce';
 import store from '../redux';
 
 // export const BASE_URL = 'https://server.appsstaging.com:3017/api/v1/';
-export const BASE_URL = 'https://sn6jm18m-5000.inc1.devtunnels.ms/api/v1/';
+export const BASE_URL = 'https://d2h44mo1ou6v2.cloudfront.net/api/v1/';
 export const ASSETS_URL = 'https://host2.appsstaging.com/3332/lift_fitness/';
-export const WEB_SOCKET_URL = 'https://sn6jm18m-5000.inc1.devtunnels.ms/';
+export const WEB_SOCKET_URL = 'https://d2h44mo1ou6v2.cloudfront.net/';
 export const GOOGLE_MAPS_URL =
   'https://www.google.com/maps/search/?api=1&query=';
 // export const BASE_URL = "http://10.0.4.71:3018/api/v1/"; //local
@@ -55,13 +55,18 @@ export const VERIFY_OTP = {
   type: REQUEST_TYPE.POST,
 };
 
+export const VERIFY_OTP_FORGOT ={
+  route: 'auth/verify-forgot-password-otp',
+  access_token_required: false,
+  type: REQUEST_TYPE.POST,
+}
 export const LOGIN = {
   route: 'auth/login',
   access_token_required: false,
   type: REQUEST_TYPE.POST,
 };
 export const RESEND_PASSWORD = {
-  route: 'users/auth/reset-password',
+  route: 'auth/reset-password',
   access_token_required: true,
   type: REQUEST_TYPE.POST,
 };
@@ -71,7 +76,7 @@ export const RESEND_OTP = {
   type: REQUEST_TYPE.POST,
 };
 export const FORGOT_PASSWORD = {
-  route: 'users/auth/forgot-password',
+  route: 'auth/forgot-password-otp',
   access_token_required: false,
   type: REQUEST_TYPE.POST,
 };
@@ -132,6 +137,11 @@ export const GET_CHAT_LIST = {
 };
 export const GET_ADD_LIST = {
   route: 'user/public-feed',
+  access_token_required: true,
+  type: REQUEST_TYPE.GET,
+};
+export const VIEW_REVIEW = {
+  route: 'user/public-feed/service-provider/ratings',
   access_token_required: true,
   type: REQUEST_TYPE.GET,
 };
@@ -201,7 +211,7 @@ export const UPLOAD_image = {
   type: REQUEST_TYPE.POST,
 };
 export const CREATE_HEEDBACK = {
-  route: 'feedbacks',
+  route: 'user/public-feed/submit-rating',
   access_token_required: true,
   type: REQUEST_TYPE.POST,
 };

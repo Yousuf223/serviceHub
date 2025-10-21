@@ -8,8 +8,9 @@ import Toast from 'react-native-toast-message';
 import NavService from '../../../helpers/NavService';
 import { appIcons, appLogos } from '../../../assets/index';
 import styles from './styles';
-import { forgotPassword,saveEmailForUser } from '../../../redux/actions/authAction';
+import { forgotPassword, saveEmailForUser } from '../../../redux/actions/authAction';
 import { connect } from 'react-redux';
+import { Text } from 'react-native';
 
 class ForgotPassword extends Component {
   state = {
@@ -17,7 +18,8 @@ class ForgotPassword extends Component {
   };
 
   onSubmit = () => {
-    const {email} = this.state;
+    const { email } = this.state;
+    const  role  = this.props.route?.params?.role
     if (!email) {
       Toast.show({
         text1: `Email field can't be empty`,
@@ -32,7 +34,8 @@ class ForgotPassword extends Component {
       });
     } else {
       let payload = {
-        email:email
+        email: email,
+        role: role
       }
       this.props.forgotPassword(payload);
       this.props.saveEmailForUser(email)
@@ -44,15 +47,20 @@ class ForgotPassword extends Component {
   }
   render() {
     const { email } = this.state;
+    const  role  = this.props.route?.params?.role
+    console.log('rolerolerole',role)
     return (
       <CustomBackground
         showLogo={false}
         titleText={'Forgot Password'}
         onBack={() => this.props.navigation.goBack()}>
         <View style={styles.container}>
-          <View style={[styles.container, {marginTop: "10%"}]}>
-            <View style={styles.logoStyle}>
-              <Image style={styles.applogo} source={appLogos.appLogo} />
+          <View style={[styles.container, { marginTop: "10%" }]}>
+            <View style={styles.container1}>
+              <View style={styles.icon}>
+                <Text style={styles.iconText}>🔧</Text>
+              </View>
+              <Text style={styles.logoText}>Smart World</Text>
             </View>
             <View style={styles.textNormal}>
               <CustomTextInput
@@ -79,5 +87,5 @@ class ForgotPassword extends Component {
 }
 
 
-const actions = { forgotPassword ,saveEmailForUser};
+const actions = { forgotPassword, saveEmailForUser };
 export default connect(null, actions)(ForgotPassword);
