@@ -11,6 +11,8 @@ import Settings from '../../screens/Main/user/Settings';
 import ChangePassword from '../../screens/Main/user/ChangePassword';
 import BusinessDetail from '../../screens/Main/user/BusinessDetail/BusinessDetail,';
 import ProfileDetail from '../../screens/Main/user/ProfileDetail';
+import RatingScreen from '../../screens/Main/user/Rating/Rating';
+import ViewReview from '../../screens/Main/user/viewReview/viewReview';
 
 const Stack = createNativeStackNavigator();
 
@@ -35,7 +37,8 @@ const UserNavigation = ({ initialRoute }) => {
       <Stack.Screen name="ChangePassword" component={ChangePassword} />
       <Stack.Screen name="BusinessDetail" component={BusinessDetail} />
       <Stack.Screen name="ProfileDetail" component={ProfileDetail} />
-
+      <Stack.Screen name="RatingScreen" component={RatingScreen} />
+      <Stack.Screen name="ViewReview" component={ViewReview} />
     </Stack.Navigator>
   );
 };

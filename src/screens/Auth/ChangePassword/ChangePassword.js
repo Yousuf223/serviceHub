@@ -10,6 +10,7 @@ import { schema } from '../../../utils/validation';
 import { connect } from 'react-redux';
 import { resendPassword } from '../../../redux/actions/authAction';
 import styles from './styles';
+import { Text } from 'react-native';
 class ChangePassword extends Component {
   state = {
     password: '',
@@ -18,44 +19,48 @@ class ChangePassword extends Component {
 
   onSubmit = () => {
     const { password, ConfirmPassword } = this.state;
-    // if (!password) {
-    //   Toast.show({
-    //     text1: `Password field can't be empty`,
-    //     type: 'error',
-    //     visibilityTime: 3000,
-    //   });
-    // } else if (password.length < 8) {
-    //   Toast.show({
-    //     text1:
-    //       'Password must be of 8 characters',
-    //     type: 'error',
-    //     visibilityTime: 3000,
-    //   });
-    // } else if (!ConfirmPassword) {
-    //   Toast.show({
-    //     text1: `Confirm password field can't be empty`,
-    //     type: 'error',
-    //     visibilityTime: 3000,
-    //   });
-    // } else if (password != ConfirmPassword) {
-    //   Toast.show({
-    //     text1: 'New password and confirm password must be same.',
-    //     type: 'error',
-    //     visibilityTime: 3000,
-    //   });
-    // } else {
-    //   let payload = {
-    //     newPassword: password,
-    //   }
-    //   this.props.resendPassword(payload);
-    // }
-    NavService.navigate('CompleteProfile')
+    const email = this.props?.route?.params?.email;
+    if (!password) {
+      Toast.show({
+        text1: `Password field can't be empty`,
+        type: 'error',
+        visibilityTime: 3000,
+      });
+    } else if (password.length < 8) {
+      Toast.show({
+        text1:
+          'Password must be of 8 characters',
+        type: 'error',
+        visibilityTime: 3000,
+      });
+    } else if (!ConfirmPassword) {
+      Toast.show({
+        text1: `Confirm password field can't be empty`,
+        type: 'error',
+        visibilityTime: 3000,
+      });
+    } else if (password != ConfirmPassword) {
+      Toast.show({
+        text1: 'New password and confirm password must be same.',
+        type: 'error',
+        visibilityTime: 3000,
+      });
+    } else {
+      let payload = {
+        email: email,
+        password: password,
+        confirmNewPassword: ConfirmPassword
+      }
+      this.props.resendPassword(payload);
+    }
+    // NavService.navigate('CompleteProfile')
   };
   componentDidMount() {
     Keyboard.dismiss()
   }
   render() {
     const { password, ConfirmPassword } = this.state;
+  
     return (
       <CustomBackground
         showLogo={false}
@@ -63,8 +68,11 @@ class ChangePassword extends Component {
         onBack={() => NavService.navigate('Login')}>
         <View style={styles.container}>
           <View style={[styles.container, { marginTop: 20 }]}>
-            <View style={styles.logoStyle}>
-              <Image style={styles.applogo} source={appLogos.appLogo} />
+            <View style={styles.container1}>
+              <View style={styles.icon}>
+                <Text style={styles.iconText}>🔧</Text>
+              </View>
+              <Text style={styles.logoText}>Smart World</Text>
             </View>
             <View style={styles.textNormal}>
               <CustomTextInput

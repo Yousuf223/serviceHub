@@ -166,7 +166,7 @@ const BusinessDetail = ({ route }) => {
 
     return null;
   };
-
+  console.log('detaildetail', detail)
   return (
     <ScrollView style={styles.container}>
       {/* Header with Image Slider */}
@@ -192,11 +192,35 @@ const BusinessDetail = ({ route }) => {
 
       {/* Details */}
       <View style={styles.content}>
-        {/* <Text style={styles.title}>{detail?.listing?.name}</Text>
-        <Text style={styles.location}>{detail?.listing?.address}</Text> */}
-
-        {/* <Text style={styles.sectionTitle}>About Us</Text>
-        <Text style={styles.description}>{detail?.listing?.description}</Text> */}
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <TouchableOpacity activeOpacity={0.8} onPress={()=> NavService.navigate('RatingScreen',{
+            id:detail?._id
+          })}
+            style={{
+              backgroundColor: colors.secondary,
+              height: 40,
+              width: 106,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 8,
+            }}
+          >
+            <Text style={{ color: colors.white, paddingLeft: 3 }}>Write A Review</Text>
+          </TouchableOpacity>
+            <TouchableOpacity activeOpacity={0.8} onPress={()=> NavService.navigate('ViewReview',{
+            id:detail?._id
+          })}
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "center",
+              borderRadius: 8,
+            }}
+          >
+            <Text style={{ color: colors.black, paddingLeft: 3 }}>View Review</Text>
+          </TouchableOpacity>
+        </View>
 
         <Text style={styles.sectionTitle}>Services & Facilities</Text>
         {renderConditionalDetails()}

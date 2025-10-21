@@ -34,7 +34,7 @@ export const colors = {
   gray:'#6A6A6A',
   lightGray1: '#CBCACA',
   lightGray2:'#3A3A3A',
-  lightGray3:"#666565",
+  lightGray3:"#CFCFCF",
   white1:'#EBEBEB',
   facebook:'#046EE5',
   whatsApp:'#007E0D',

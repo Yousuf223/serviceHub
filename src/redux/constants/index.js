@@ -99,6 +99,8 @@ export const CREATE_HEEDBACK = createRequestTypes('CREATE_HEEDBACK')
 export const TOGGLE_NOTIFICATION = createRequestTypes('TOGGLE_NOTIFICATION')
 export const GET_MESSAGES = createRequestTypes('GET_MESSAGES');
 export const GET_CHAT_LIST = createRequestTypes('GET_CHAT_LIST');
+export const VERIFY_OTP_FORGOT = createRequestTypes('VERIFY_OTP_FORGOT')
+export const VIEW_REVIEW = createRequestTypes('VIEW_REVIEW')
 export default {
   LOADING_STATE,
   SOCIAL_SIGNUP_USER,
@@ -120,6 +122,7 @@ export default {
   ADD_EVENT,
   GET_NOTIFICATION,
   GET_EVENT,
+  VIEW_REVIEW,
   GET_ALL_USERS, FOLLOW_USER,
   GET_ALL_LEVELS, GET_ALL_STORE, CREATE_TRIP, GET_FOLLOWERS_REQUEST,
   ACCEPT_REQUEST, NOTIFICATION_TOGGLE,
@@ -154,5 +157,6 @@ export default {
   TOGGLE_NOTIFICATION,
   GET_PROFILE_DETAIL,
   GET_MESSAGES,
-  GET_CHAT_LIST
+  GET_CHAT_LIST,
+  VERIFY_OTP_FORGOT
 };

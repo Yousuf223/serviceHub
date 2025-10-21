@@ -16,7 +16,7 @@ import { CountdownCircleTimer } from 'react-native-countdown-circle-timer';
 import { appLogos } from '../../../assets/index';
 import styles from './styles';
 import { colors } from '../../../utils';
-import { otpVerify, resendOTP } from '../../../redux/actions/authAction';
+import { otpVerify, resendOTP, verifyOtpForgot } from '../../../redux/actions/authAction';
 import { useDispatch, useSelector } from 'react-redux';
 
 const Otp = ({ navigation, route }) => {
@@ -34,7 +34,7 @@ const Otp = ({ navigation, route }) => {
   const inputRefs = useRef([]);
 
   useEffect(() => {
-    setFocusIndex(params?.otp);
+    setFocusIndex(params?.otp || route.params?.otp);
   }, [params]); // Ensure focus index is updated
 
   const handleChange = (text, index) => {
@@ -78,6 +78,32 @@ const Otp = ({ navigation, route }) => {
     }
   };
 
+
+    const onVerify = () => {
+    const otpCode = otp.join('');
+    if (otp) {
+      if (otpData) {
+        const payload = {
+          role: otpData.role,
+          email: otpData?.email,
+          otp: code,
+        };
+        dispatch(verifyOtpForgot(payload));
+      } else {
+        Toast.show({
+          text1: 'Email is not available.',
+          type: 'error',
+          visibilityTime: 3000,
+        });
+      }
+    } else {
+      Toast.show({
+        text1: "OTP field can't be empty or incomplete.",
+        type: 'error',
+        visibilityTime: 3000,
+      });
+    }
+  };
   // Timer for OTP expiration
   const startInterval = () => {
     clearInterval(timer);
@@ -152,7 +178,6 @@ const Otp = ({ navigation, route }) => {
   const onCompleteTimer = () => {
     setResendOtpActive(true);
   };
-
   return (
     <CustomBackground showLogo={false} titleText={'Verification'}>
       <View style={styles.container}>
@@ -221,7 +246,7 @@ const Otp = ({ navigation, route }) => {
             </Text>
           </TouchableOpacity>
         </View>
-        <CustomButton buttonStyle={styles.buttonStyle} title="Submit" onPress={onSubmit} />
+        <CustomButton buttonStyle={styles.buttonStyle} title="Submit" onPress={ ()=> otpData?.screenName === 'forgot' ? onVerify() : onSubmit()} />
       </View>
     </CustomBackground>
   );

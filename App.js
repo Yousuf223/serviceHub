@@ -22,7 +22,7 @@ import {
 import {GestureHandlerRootView} from 'react-native-gesture-handler';
 import {PersistGate} from 'redux-persist/integration/react';
 import Toast, {BaseToast, ErrorToast} from 'react-native-toast-message';
-import {Provider, useSelector} from 'react-redux';
+import {Provider, useDispatch, useSelector} from 'react-redux';
 import store, {persistor} from './src/redux';
 import Loader from './src/helpers/Loader';
 import MainNavigation from './src/routes';
@@ -31,7 +31,7 @@ import LinearGradient from 'react-native-linear-gradient';
 import { appImages } from './src/assets';
 import { WEB_SOCKET_URL } from './src/config/WebService';
 import { io } from 'socket.io-client';
-import { saveScoket } from './src/redux/actions/appAction';
+import { loaderStopWithDispatch, saveScoket } from './src/redux/actions/appAction';
 import AppWithSocket from './AppWithSocket';
 // ignore warnings
 LogBox.ignoreAllLogs();
@@ -73,7 +73,7 @@ const toastConfig = {
 
 
 const App = () => {
-  console.log('Checkout')
+
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor}>

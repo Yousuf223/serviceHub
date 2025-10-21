@@ -167,20 +167,6 @@ const GooglePlaceAutocomplete = ({
         clear={() => setHide(true)} 
         placeholder={placeholder ? placeholder : 'Add Location'}
         placeholderTextColor={colors.white}
-        // onPress={(data, details = null) => {
-        //   if(details){
-        //     setHide(false)
-        //     // setSelectedAddress(null); // Clear selected address
-        //   }
-        //   console.log('formatted_address',details)
-        //   const {address_components , formatted_address, geometry } = details      ;
- 
-        //  getAddressFromLatLng(geometry.location.lat, geometry.location.lng);
-         
- 
-        //   cityCountry(city1,country1)
-        //   callback(formatted_address, geometry);
-        // }}
         onPress={(data, details = null) => {
           const { formatted_address, geometry } = details;
           callback(formatted_address, geometry, label);

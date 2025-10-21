@@ -21,7 +21,8 @@ import API_URL, {
   FORGOT_PASSWORD,
   RESEND_OTP,
   SOCIAL_LOGIN,
-  WEB_SOCKET_URL, ADD_PROFILE_PICTURE
+  WEB_SOCKET_URL, ADD_PROFILE_PICTURE,
+  VERIFY_OTP_FORGOT
 } from '../config/WebService';
 import ApiSauce from '../services/ApiSauce';
 import Util from '../utils/Utils';
@@ -116,7 +117,7 @@ function* signUp() {
       console.log('Yousuf', error?.message);
       yield put(loaderStop());
       if (error && error.message) {
-        Util.DialogAlert(error.message);
+        Util.DialogAlert(error?.message[0]?.message);
       } else {
         Util.DialogAlert('Something went wrong!');
       }
@@ -155,6 +156,42 @@ function* oTPVerify() {
     }
   }
 }
+
+
+function* verifyOtpForgot() {
+  while (true) {
+    const { payload, role, user_id, screenName } = yield take(
+      ActionTypes.VERIFY_OTP_FORGOT.REQUEST,
+    );
+    console.log('screenNamescreenName', screenName);
+    yield put(loaderStart());
+    try {
+      const response = yield call(
+        callRequest,
+        VERIFY_OTP_FORGOT,
+        payload,
+        '',
+        {},
+        ApiSauce,
+      );
+      yield put(loaderStop());
+      console.log('verifyOtp', response)
+      if (response) {
+        yield put(saveTokenForLoginUser(response?.token));
+        Util.DialogAlert(response.message, 'success');
+        NavService.navigate('ChangePassword', { email: payload.email });
+      } else {
+        Util.DialogAlert(response.message);
+      }
+    } catch (error) {
+      console.log('error', error);
+      yield put(loaderStop());
+      Util.DialogAlert(error.message);
+    }
+  }
+}
+
+
 function* resendOTP() {
   while (true) {
     const { payload, responseCallback } = yield take(ActionTypes.RESEND_OTP.REQUEST);
@@ -337,7 +374,7 @@ function* resetPassword() {
       );
       yield put(loaderStop());
       console.log('payloadofresendpassword', response);
-      if (response.status.success === true) {
+      if (response) {
         Util.DialogAlert(response.message, 'success')
         NavService.navigate('Login');
       } else {
@@ -364,11 +401,16 @@ function* forgotPassword() {
         ApiSauce,
       );
       yield put(loaderStop());
-      if (response?.status?.success == true) {
-        NavService.navigate('Otp', {
+      if (response) {
+        console.log('responseresponse-----', response)
+        const payLoadData = {
           screenName: 'forgot',
-          email: payload,
-          otp: response.data.otp
+          email: payload.email,
+          otp: response.data,
+          role: payload?.role
+        }
+        NavService.navigate('Otp', {
+          data: payLoadData
         });
         Util.DialogAlert(response.message, 'success');
       } else {
@@ -451,4 +493,5 @@ export default function* root() {
   yield fork(forgotPassword);
   yield fork(changePassword);
   yield fork(addProfilePicture);
+  yield fork(verifyOtpForgot);
 }
